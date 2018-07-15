@@ -1,36 +1,127 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Code</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type="text/css" media="screen" href="./main.css" />
-    
+
 </head>
-    <body>
-        <nav>
-            <ul id="navigation">
-                <li id="main"><a>Home</a></li>
-                <li id="quiz"><a>Quiz</a></li>
-                <li id="roster"><a>Roster</a></li>
-                <li id="random"><a>Random</a></li>
-                <li id="pairs"><a>Pairs</a></li>
-                <li id="code"><a>Code</a></li>
-            </ul>
-            <ul id="auth">
-                <li id="login"><a>Log In</a></li>
-                <li id="signin"><a>Sign Up</a></li>
-            </ul>
-            <div id='results'></div>
-        </nav>
-        <!-- <h1>Noice</h1> -->
-        <!-- putting this down here because the page was loading before the event listener could be assigned -->
 
-        <script src="../../node_modules/superagent/superagent.js"></script>
+<body>
+    <nav>
+        <ul id="navigation">
+            <li id="main">
+                <a>Home</a>
+            </li>
+            <li id="quiz">
+                <a>Quiz</a>
+            </li>
+            <li id="roster">
+                <a>Roster</a>
+            </li>
+            <li id="random">
+                <a>Random</a>
+            </li>
+            <li id="pairs">
+                <a>Pairs</a>
+            </li>
+            <li id="code">
+                <a>Code</a>
+            </li>
+        </ul>
+        <ul id="auth">
+            <li id="login">
+                <a>Log In</a>
+            </li>
+            <li id="signin">
+                <a>Sign Up</a>
+            </li>
+        </ul>
+        <div id='results'></div>
+    </nav>
+    <!-- <h1>Noice</h1> -->
+    <!-- putting this down here because the page was loading before the event listener could be assigned -->
+    <div id="container" style="width:800px;height:600px;border:1px solid grey"></div>
+    <!-- <div id="" style="width:800px;height:600px;border:1px solid grey">
+            <form>
+                <input type="text" id="container" style="width:800px;height:600px;border:1px solid grey">
+            </form>
+            
+            
+        </div> -->
+    <button id='run' type="submit">Run</button>
 
-        <script src="../page-events.js"></script>
-        <script>
+    <label id="result"></label>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+        crossorigin="anonymous"></script>
+    <script>
+        // Monaco uses a custom amd loader that overrides node's require.
+        // Keep a reference to node's require so we can restore it after executing the amd loader file.
+        var nodeRequire = global.require;
+    </script>
+    <script src="../../node_modules/monaco-editor/min/vs/loader.js"></script>
+    <script>
+        // Save Monaco's amd require and restore Node's require
+        var amdRequire = global.require;
+        global.require = nodeRequire;
+    </script>
+
+    <script>
+        // require node modules before loader.js comes in
+        var path = require('path');
+
+        function uriFromPath(_path) {
+            var pathName = path.resolve(_path).replace(/\\/g, '/');
+            if (pathName.length > 0 && pathName.charAt(0) !== '/') {
+                pathName = '/' + pathName;
+            }
+            return encodeURI('file://' + pathName);
+        }
+        amdRequire.config({
+            baseUrl: uriFromPath(path.join(__dirname, '../../node_modules/monaco-editor/min'))
+        });
+        // workaround monaco-css not understanding the environment
+        self.module = undefined;
+        // workaround monaco-typescript not understanding the environment
+        self.process.browser = true;
+        amdRequire(['vs/editor/editor.main'], function () {
+            var editor = monaco.editor.create(document.getElementById('container'), {
+                value: [
+                    'function x() {',
+                    '\tconsole.log("Hello world!");',
+                    '}'
+                ].join('\n'),
+                language: 'javascript'
+            });
+        });
+    </script>
+    <script src="../../node_modules/superagent/superagent.js"></script>
+
+    <script src="../page-events.js"></script>
+    <script>
+        $('#run').on('click', function (e) {
+            e.preventDefault();
+            let data = editor.getValue();
+            let obj = {}
+            obj.code = data;
+            obj.fileName = 'reverseString-4';
+            obj.day = '01-introduction'
+            console.log('data -->', obj);
+            $.ajax({
+                type: "POST",
+                url: "http://localhost:3000/api/v1/code",
+                data: obj,
+                success: function (data) {
+                    console.log(data);
+                    $('#result').text(JSON.stringify(data));
+                },
+            });
+        });
+    </script>
+    <!-- <script>
         // fetch('https://raw.githubusercontent.com/code-commando/sample-class/master/01-node-ecosystem/quiz.json')
 
         superagent.get('https://code-comrade-ihgkkgzrmt.now.sh/api/v1/quiz')
@@ -41,7 +132,8 @@
             document.getElementById('results').innerHTML=res.body[0].day;
         });
 
-        </script>
-        <!-- script tag above / need a client to do an externalfetch / talk directly to an external API from electron-->
-    </body>
+        </script> -->
+    <!-- script tag above / need a client to do an externalfetch / talk directly to an external API from electron-->
+</body>
+
 </html>
