@@ -1,0 +1,41 @@
+/* having this instead of having the modules file */
+* {
+    margin:0;
+    padding:0;
+}
+body {
+    background-color: #1E1E1E;
+    color: white;
+    font-family: Arial, Helvetica, sans-serif;
+}
+nav {
+    background: #32293B;
+
+}
+ul#navigation, ul#auth {
+    list-style: none;
+    display: inline;
+    /* text-align:center; */
+
+}
+ul#auth {
+    /* margin-left:auto; */
+    float:right;
+}
+li {
+    display: inline-block;
+    cursor: pointer;
+    padding: 5px 20px 5px 0px;
+
+    /* border: 2px solid green; */
+    transition: 170ms;
+    /* text-align:center; */
+
+}
+/* li a {
+    padding-left:10%;
+} */
+li:hover {
+    background: #FC1156;
+    /* color: white */
+}

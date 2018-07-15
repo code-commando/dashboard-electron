@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Home</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" media="screen" href="./main.css" />
+    
+</head>
+    <body>
+        <nav>
+            <ul id="navigation">
+                <li id="main"><a>Home</a></li>
+                <li id="quiz"><a>Quiz</a></li>
+                <li id="roster"><a>Roster</a></li>
+                <li id="random"><a>Random</a></li>
+                <li id="pairs"><a>Pairs</a></li>
+                <li id="code"><a>Code</a></li>
+            </ul>
+            <ul id="auth">
+                <li id="login"><a>Log In</a></li>
+                <li id="signin"><a>Sign Up</a></li>
+            </ul>
+            <div id='results'></div>
+        </nav>
+        <!-- <h1>Noice</h1> -->
+        <!-- putting this down here because the page was loading before the event listener could be assigned -->
+        <script src="../../node_modules/superagent/superagent.js"></script>
+        <script src="../page-events.js"></script>
+        <script>
+        // fetch('https://raw.githubusercontent.com/code-commando/sample-class/master/01-node-ecosystem/quiz.json')
+
+        superagent.get('https://code-comrade.now.sh/api/v1/quiz/1')
+
+        .then( res => {
+            console.log(res);
+            document.getElementById('results').innerHTML=res.body[0].day;
+        });
+
+        </script>
+    </body>
+</html>

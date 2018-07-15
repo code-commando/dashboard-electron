@@ -1,0 +1,31 @@
+{
+  "name": "electron_demo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "db": "mongod --dbpath=/Users/mx/data/db",
+    "start": "electron .",
+    "watch": "nodemon index.js",
+    "test-watch": "jest --watchAll",
+    "test": "jest --verbose --coverage",
+    "lint": "eslint **/*.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GitHubMaxwell/electron_demo.git"
+  },
+  "author": "maxwell rediker",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/GitHubMaxwell/electron_demo/issues"
+  },
+  "homepage": "https://github.com/GitHubMaxwell/electron_demo#readme",
+  "devDependencies": {
+    "electron": "^2.0.5"
+  },
+  "dependencies": {
+    "jquery": "^3.3.1",
+    "superagent": "^3.8.3"
+  }
+}
