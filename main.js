@@ -1,11 +1,6 @@
 'use strict';
 
-// const ipc = require('ipc');
 const {app, BrowserWindow, ipcMain} = require('electron');
-// const quizOperations = require('./src/quiz/quiz-operations.js');
-// const rosterOperations = require('./src/roster/roster-operations.js');
-// const foo = require('./src/anotherwindow/another-window-operations.js').foo;
-// const bar = require('./src/anotherwindow/another-window-operations.js').bar;
 
 //mangage all windows in the main.js
 // best practice to wrap everything in the app.on('ready', )
