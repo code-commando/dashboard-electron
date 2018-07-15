@@ -44,7 +44,10 @@
     </nav>
     <!-- <h1>Noice</h1> -->
     <!-- putting this down here because the page was loading before the event listener could be assigned -->
-    <div id="container" style="width:800px;height:600px;border:1px solid grey"></div>
+    <div id="container" style="width:800px;height:600px;border:1px solid grey">
+        <button id='run' type="submit">Run</button>
+
+    </div>
     <!-- <div id="" style="width:800px;height:600px;border:1px solid grey">
             <form>
                 <input type="text" id="container" style="width:800px;height:600px;border:1px solid grey">
@@ -52,7 +55,7 @@
             
             
         </div> -->
-    <button id='run' type="submit">Run</button>
+   
 
     <label id="result"></label>
     <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
@@ -97,14 +100,9 @@
                 language: 'javascript'
             });
         });
-    </script>
-    <script src="../../node_modules/superagent/superagent.js"></script>
-
-    <script src="../page-events.js"></script>
-    <script>
-        $('#run').on('click', function (e) {
+        document.getElementById('run').addEventListener('click', function (e) {
             e.preventDefault();
-            let data = editor.getValue();
+            let data = document.getElementById('container').getValue();
             let obj = {}
             obj.code = data;
             obj.fileName = 'reverseString-4';
@@ -120,6 +118,12 @@
                 },
             });
         });
+    </script>
+    <script src="../../node_modules/superagent/superagent.js"></script>
+
+    <script src="../page-events.js"></script>
+    <script>
+       
     </script>
     <!-- <script>
         // fetch('https://raw.githubusercontent.com/code-commando/sample-class/master/01-node-ecosystem/quiz.json')

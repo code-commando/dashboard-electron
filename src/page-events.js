@@ -34,6 +34,25 @@ document.getElementById('code').addEventListener('click', event => {
   ipcRenderer.send('load-code');
 });
 
+// document.getElementById('run').addEventListener('click', event, editor => {
+//   event.preventDefault();
+//   let data = editor.getValue();
+//   let obj = {};
+//   obj.code = data;
+//   obj.fileName = 'reverseString-4';
+//   obj.day = '01-introduction';
+//   console.log('data -->', obj);
+//   $.ajax({
+//     type: 'POST',
+//     url: 'http://localhost:3000/api/v1/code',
+//     data: obj,
+//     success: function (data) {
+//       console.log(data);
+//       $('#result').text(JSON.stringify(data));
+//     },
+//   });
+//   // ipcRenderer.send('load-code');
+// });
 
 /*
 
