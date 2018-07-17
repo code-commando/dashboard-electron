@@ -33,9 +33,23 @@ document.getElementById('nav-pairs').addEventListener('click', () => superagent.
   div.innerHTML=str;
 }));
 
+
+document.getElementById('nav-random').addEventListener('click', () => superagent.get('https://code-comrade.now.sh/api/v1/roster/random')
+.then(data => {
+  clearDiv();
+  let str = '<ul>';
+  let random = data.body.results;
+  for(let student of random) {
+    str += `<li>${student}</li>`;
+  }
+  str +='</ul>';
+  let div = document.getElementById('random');
+  div.innerHTML=str;
+}));
+
 function clearDiv() {
   let obj = document.getElementsByClassName('clearDiv');
-  Object.entries(obj).forEach(div => {
-    div[1].innerHTML = '';
+  Object.values(obj).forEach(div => {
+    div.innerHTML = '';
   });
 }

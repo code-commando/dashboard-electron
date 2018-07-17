@@ -22,7 +22,7 @@ ul#auth {
   /* margin-left:auto; */
   float:right;
 }
-li {
+nav ul li {
   display: inline-block;
   cursor: pointer;
   padding: 5px 20px 5px 0px;
@@ -35,7 +35,9 @@ li {
 /* li a {
   padding-left:10%;
 } */
-li:hover {
+nav ul li:hover {
   background: #FC1156;
   /* color: white */
 }
+
+.clearDiv
