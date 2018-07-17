@@ -58,9 +58,16 @@
    
 
     <label id="result"></label>
-    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
-        crossorigin="anonymous"></script>
-    <script>
+    <!-- Insert this line above script imports  -->
+<script>if (typeof module === 'object') {window.module = module; module = undefined;}</script>
+
+<!-- normal script imports etc  --> 
+<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+    crossorigin="anonymous"></script>
+
+
+<!-- Insert this line after script imports -->
+<script>if (window.module) module = window.module;</script>
         // Monaco uses a custom amd loader that overrides node's require.
         // Keep a reference to node's require so we can restore it after executing the amd loader file.
         var nodeRequire = global.require;
@@ -102,12 +109,12 @@
         });
         document.getElementById('run').addEventListener('click', function (e) {
             e.preventDefault();
-            let data = document.getElementById('container').getValue();
+            let data = document.getElementById('container').textContent;
             let obj = {}
             obj.code = data;
             obj.fileName = 'reverseString-4';
             obj.day = '01-introduction'
-            console.log('data -->', obj);
+            console.log('data -->', data);
             $.ajax({
                 type: "POST",
                 url: "http://localhost:3000/api/v1/code",
