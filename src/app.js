@@ -2,6 +2,7 @@
 
 require('babel-register');
 import superagent from 'superagent';
+const shell = require('electron').shell;
 
 document.getElementById('nav-roster').addEventListener('click', () => {
   clearDiv();
@@ -46,6 +47,46 @@ document.getElementById('nav-random').addEventListener('click', () => superagent
   let div = document.getElementById('random');
   div.innerHTML=str;
 }));
+
+document.getElementById('signup').addEventListener('click', () => {
+  let githubURL = 'https://github.com/login/oauth/authorize';
+  let options = {
+    // local
+    // client_id: 'd6c0defbd80f3979493a',
+    //live
+    client_id: 'f749977a8455b627dc56',
+    // redirect_uri: 'http://localhost:3000/oauth',
+    redirect_uri: 'https://code-commando.herokuapp.com/oauth',
+    scope: 'read:user repo',
+    state: 'autumn',
+    allow_signup: 'true',
+  };  
+  let QueryString = Object.keys(options).map((key, i) => {
+    return `${key}=` + encodeURIComponent(options[key]);
+  }).join('&');
+  let authURL = `${githubURL}?${QueryString}`;
+  shell.openExternal(authURL);
+});
+
+document.getElementById('login').addEventListener('click', () => {
+  let githubURL = 'https://github.com/login/oauth/authorize';
+  let options = {
+    // local
+    // client_id: 'd6c0defbd80f3979493a',
+    //live
+    client_id: 'f749977a8455b627dc56',
+    // redirect_uri: 'http://localhost:3000/oauth',
+    redirect_uri: 'https://code-commcando.herokuapp.com/oauth',
+    scope: 'read:user repo',
+    state: 'autumn',
+    allow_signup: 'true',
+  };  
+  let QueryString = Object.keys(options).map((key, i) => {
+    return `${key}=` + encodeURIComponent(options[key]);
+  }).join('&');
+  let authURL = `${githubURL}?${QueryString}`;
+  shell.openExternal(authURL);
+});
 
 function clearDiv() {
   let obj = document.getElementsByClassName('clearDiv');
