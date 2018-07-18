@@ -44,6 +44,9 @@
   <div id="pairs" class="clearDiv"></div>
   <div id="random" class="clearDiv"></div>
   <div id="repl" class="clearDiv"></div>
+  <button style="height:2em;width:5em;font-weight: bold;font-size: 0.75em;display:none;" id='run' type="submit">Run</button><br />
+  <h4 style="display:none;" id="results-label">Results:</h4>
+  <div style="display:none;"id="result"></div>
 </body>
 <script src="https://code.jquery.com/jquery-3.3.1.js" integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60=" crossorigin="anonymous"></script>
 <script>window.$ = window.jQuery = require('jquery');</script>
@@ -96,8 +99,49 @@
       'width': '800px',
       'height': '600px',
     })
+    $('#run').show()
+    $('#results-label').show();
+    $('#result').show();
+
   })
+</script>
+<script>
+    $('#run').on('click', function (e) {
+        e.preventDefault();
+        $('#result').empty();
+        let data = document.getElementById('repl').innerText;
+        let obj = {}
+        obj.code = data;
+        obj.day = '01-node-ecosystem'
+        obj.language = 'javascript';
+        // obj.sha = '563cec42a9bdbee9d7c0a2428486dcbe094f2f51'
+        console.log('data -->', obj);
+        $.ajax({
+            type: "POST",
+            url:"https://code-commando.herokuapp.com/api/v1/code",
+            data: obj,
+            success: function (data) {
+                console.log('output', data);
+                $('#result').text(JSON.stringify(data));
+            },
+        });
+    });
+
+    function removeLineNumbers(str) {
+strArray = str.split(' ');
+console.log(str.split(' '))
+let newArray = [];
+
+for(let i = 1; i < strArray.length; i++) {
+
+  if(strArray[i] !== '') {
+    for(let j = i; j < strArray.length; j++) {
+      newArray.push(strArray[j])
+    }
+  }
+}
+return newArray.join();
+}
 
 </script>
-
 </html>
