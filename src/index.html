@@ -81,12 +81,13 @@
   self.module = undefined;
   // workaround monaco-typescript not understanding the environment
   self.process.browser = true;
+  var editor;
   document.getElementById('nav-repl').addEventListener('click', () => {
     console.log('clicked!')
     clearDiv();
 
     amdRequire(['vs/editor/editor.main'], function () {
-      var editor = monaco.editor.create(document.getElementById('repl'), {
+        editor = monaco.editor.create(document.getElementById('repl'), {
         value: [
           'function x() {',
           '\tconsole.log("Hello world!");',
@@ -104,12 +105,11 @@
     $('#result').show();
 
   })
-</script>
-<script>
-    $('#run').on('click', function (e) {
+
+      $('#run').on('click', function (e) {
         e.preventDefault();
         $('#result').empty();
-        let data = document.getElementById('repl').innerText;
+        let data = editor.getValue();
         let obj = {}
         obj.code = data;
         obj.day = '01-node-ecosystem'
@@ -126,22 +126,24 @@
             },
         });
     });
+</script>
+<script>
 
-    function removeLineNumbers(str) {
-strArray = str.split(' ');
-console.log(str.split(' '))
-let newArray = [];
+//     function removeLineNumbers(str) {
+// strArray = str.split(' ');
+// console.log(str.split(' '))
+// let newArray = [];
 
-for(let i = 1; i < strArray.length; i++) {
+// for(let i = 1; i < strArray.length; i++) {
 
-  if(strArray[i] !== '') {
-    for(let j = i; j < strArray.length; j++) {
-      newArray.push(strArray[j])
-    }
-  }
-}
-return newArray.join();
-}
+//   if(strArray[i] !== '') {
+//     for(let j = i; j < strArray.length; j++) {
+//       newArray.push(strArray[j])
+//     }
+//   }
+// }
+// return newArray.join();
+// }
 
 </script>
 </html>
