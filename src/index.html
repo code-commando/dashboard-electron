@@ -33,7 +33,7 @@
       <li id="login">
         <a>Log In</a>
       </li>
-      <li id="signin">
+      <li id="signup">
         <a>Sign Up</a>
       </li>
     </ul>
@@ -42,8 +42,62 @@
   <div id="quiz" class="clearDiv"></div>
   <div id="roster" class="clearDiv"></div>
   <div id="pairs" class="clearDiv"></div>
-  <div id="random" class="clearDiv"></div>  
+  <div id="random" class="clearDiv"></div>
   <div id="repl" class="clearDiv"></div>
 </body>
-<script src = "./app.js"></script>
+<script src="https://code.jquery.com/jquery-3.3.1.js" integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60=" crossorigin="anonymous"></script>
+<script>window.$ = window.jQuery = require('jquery');</script>
+<script src="./app.js"></script>
+<script>if (window.module) module = window.module;</script>
+<!-- // Monaco uses a custom amd loader that overrides node's require.
+        // Keep a referen ce to node's require so we can restore it after executing the amd loader file.
+        var nodeRequire = global.require; -->
+</script>
+<script src="../node_modules/monaco-editor/min/vs/loader.js"></script>
+<script>
+  // Save Monaco's amd require and restore Node's require
+  var amdRequire = global.require;
+  global.require = nodeRequire;
+</script>
+
+<script>
+  // require node modules before loader.js comes in
+  var path = require('path');
+
+  function uriFromPath(_path) {
+    var pathName = path.resolve(_path).replace(/\\/g, '/');
+    if (pathName.length > 0 && pathName.charAt(0) !== '/') {
+      pathName = '/' + pathName;
+    }
+    return encodeURI('file://' + pathName);
+  }
+  amdRequire.config({
+    baseUrl: uriFromPath(path.join(__dirname, '../node_modules/monaco-editor/min'))
+  });
+  // workaround monaco-css not understanding the environment
+  self.module = undefined;
+  // workaround monaco-typescript not understanding the environment
+  self.process.browser = true;
+  document.getElementById('nav-repl').addEventListener('click', () => {
+    console.log('clicked!')
+    clearDiv();
+
+    amdRequire(['vs/editor/editor.main'], function () {
+      var editor = monaco.editor.create(document.getElementById('repl'), {
+        value: [
+          'function x() {',
+          '\tconsole.log("Hello world!");',
+          '}'
+        ].join('\n'),
+        language: 'javascript'
+      });
+    });
+    $('#repl').css({
+      'width': '800px',
+      'height': '600px',
+    })
+  })
+
+</script>
+
 </html>
