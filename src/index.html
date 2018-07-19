@@ -141,6 +141,7 @@
       'color': 'white',
     })
     $('#resultWindow').show()
+    $('#resultWindow').text('Output Console')
     $('#run').show()
     // $('#results-label').show();
     // $('#result').show();
@@ -159,7 +160,7 @@
     console.log('data -->', obj);
     $.ajax({
       type: "POST",
-      url: "http://api.commando.ccs.net/api/v1/code",
+      url: "api.commando.ccs.net/api/v1/code",
       data: obj,
       success: function (data) {
         if(obj.language==='javascript'){
