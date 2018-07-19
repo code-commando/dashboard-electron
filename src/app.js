@@ -24,12 +24,18 @@ document.getElementById('days').addEventListener('click', (event) => {
     $('#home').hide();
     day = event.target.id;
     return superagent.get('https://api.github.com/repos/code-commando/sample-class/contents/')
+    //REMOVEEEEEE
+    .set({'Content-Type': 'application/json', 'Authorization': 'Bearer 8e08d9da7fa9b470d324c3748abca9d6d081a051'})
       .then(data => {
+    //REMOVEEEEEE
         return superagent.get(data.body[day-1].url)
+        .set({'Content-Type': 'application/json', 'Authorization': 'Bearer 8e08d9da7fa9b470d324c3748abca9d6d081a051'})
           .then(contents => {
             contents.body.forEach(file => {
               if(file.name.split('.')[0] === 'README') {
                 return superagent.get(file.download_url)
+    //REMOVEEEEEE
+                .set({'Content-Type': 'application/json', 'Authorization': 'Bearer 8e08d9da7fa9b470d324c3748abca9d6d081a051'})  
                   .then(README => {
                     document.getElementById('readMe').innerText = README.text;
                   });
@@ -40,24 +46,40 @@ document.getElementById('days').addEventListener('click', (event) => {
   }
 });
 
-// document.getElementById('nav-quiz').addEventListener('click', () => {
-//   console.log('clicked');
-//   if (day) {
-//     clearDiv();
-//     $('#home').hide();
-//     return superagent.get(`http://api.commando.ccs.net/api/v1/quiz/${day}`)
-//       .then(questions => {
-//         let qObj = questions.body.results;
-//         qObj.forEach((question,index) => {
-//           let div = document.createElement('div');
-//           div.setAttribute('id', `question${index+1}`);
-//           document.getElementById('quiz').appendChild(div);
-//           let questionEl = document.createElement('h4').textContent = question.question;
-//           div.appendChild(questionEl);
-//         });
-//       });
-//   }
-// });
+document.getElementById('nav-quiz').addEventListener('click', () => {
+  console.log('clicked');
+  if (day) {
+    clearDiv();
+    $('#home').hide();
+    return superagent.get(`http://api.commando.ccs.net/api/v1/quiz/${day}`)
+      .then(questions => {
+        let qObj = questions.body.results;
+        qObj.forEach((question,index) => {
+          console.log(question);
+          document.getElementById('quiz').appendChild(document.createElement('br'));
+          let div = document.createElement('div');
+
+          div.setAttribute('id', `question${index+1}`);
+          document.getElementById('quiz').appendChild(div);
+          let questionEl = document.createElement('h4');
+          questionEl.appendChild(document.createTextNode(question.question));
+          div.appendChild(questionEl);
+
+          let answerList = document.createElement('ol');
+          console.log(Array.isArray(question.answers));
+          if(Array.isArray(question.answers)) {
+            let answersArray = question.answers;
+            answersArray.forEach(choice => {
+              let listItem = document.createElement('li');
+              listItem.appendChild(document.createTextNode(choice));
+              answerList.appendChild(listItem);
+              div.appendChild(answerList);
+            });
+          }
+        });
+      });
+  }
+});
 
 document.getElementById('nav-roster').addEventListener('click', () => {
   $('#home').hide();
