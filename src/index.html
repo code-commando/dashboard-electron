@@ -75,9 +75,6 @@
   
   <div>
     <button style="height:2em;width:5em;font-weight: bold;font-size: 0.75em;display:none;" id='run' type="submit">Run</button>
-    <br />
-    <h4 style="display:none;" id="results-label" class="clearDiv">Results:</h4>
-    <div style="display:none;" id="result" class="clearDiv"></div>
 </body>
 <script src="https://code.jquery.com/jquery-3.3.1.js" integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60=" crossorigin="anonymous"></script>
 <script>window.$ = window.jQuery = require('jquery');</script>
@@ -143,9 +140,6 @@
     $('#resultWindow').show()
     $('#resultWindow').text('Output Console')
     $('#run').show()
-    // $('#results-label').show();
-    // $('#result').show();
-
   })
 
   $('#run').on('click', function (e) {
@@ -160,7 +154,7 @@
     console.log('data -->', obj);
     $.ajax({
       type: "POST",
-      url: "api.commando.ccs.net/api/v1/code",
+      url: "http://api.commando.ccs.net/api/v1/code",
       data: obj,
       success: function (data) {
         if(obj.language==='javascript'){
