@@ -25,17 +25,17 @@ document.getElementById('days').addEventListener('click', (event) => {
     day = event.target.id;
     return superagent.get('https://api.github.com/repos/code-commando/sample-class/contents/')
     //REMOVEEEEEE
-    .set({'Content-Type': 'application/json', 'Authorization': 'Bearer 90aa9cad0650b2aa2f2eda5b097d84c28e6c22ec'})
+    .set({'Content-Type': 'application/json', 'Authorization': 'Bearer a1e127dd906acc049beda4f838e77157e7b88f68'})
       .then(data => {
     //REMOVEEEEEE
         return superagent.get(data.body[day-1].url)
-        .set({'Content-Type': 'application/json', 'Authorization': 'Bearer 90aa9cad0650b2aa2f2eda5b097d84c28e6c22ec'})
+        .set({'Content-Type': 'application/json', 'Authorization': 'Bearer a1e127dd906acc049beda4f838e77157e7b88f68'})
           .then(contents => {
             contents.body.forEach(file => {
               if(file.name.split('.')[0] === 'README') {
                 return superagent.get(file.download_url)
     //REMOVEEEEEE
-                .set({'Content-Type': 'application/json', 'Authorization': 'Bearer 90aa9cad0650b2aa2f2eda5b097d84c28e6c22ec'})  
+                .set({'Content-Type': 'application/json', 'Authorization': 'Bearer a1e127dd906acc049beda4f838e77157e7b88f68'})  
                   .then(README => {
                     document.getElementById('readMe').innerText = README.text;
                   });
@@ -130,11 +130,11 @@ document.getElementById('signup').addEventListener('click', () => {
   let githubURL = 'https://github.com/login/oauth/authorize';
   let options = {
     // local
-    // client_id: 'd6c0defbd80f3979493a',
+    client_id: 'd6c0defbd80f3979493a',
     //live
-    client_id: 'f749977a8455b627dc56',
-    // redirect_uri: 'http://localhost:3000/oauth',
-    redirect_uri: 'https://code-commando.herokuapp.com/oauth',
+    // client_id: 'f749977a8455b627dc56',
+    redirect_uri: 'http://localhost:3000/oauth',
+    // redirect_uri: 'http://api.commando.ccs.net/oauth',
     scope: 'read:user repo',
     state: 'autumn',
     allow_signup: 'true',
@@ -143,18 +143,18 @@ document.getElementById('signup').addEventListener('click', () => {
     return `${key}=` + encodeURIComponent(options[key]);
   }).join('&');
   let authURL = `${githubURL}?${QueryString}`;
-  shell.openExternal(authURL);
+  shell.openURL(authURL);
 });
 
 document.getElementById('login').addEventListener('click', () => {
   let githubURL = 'https://github.com/login/oauth/authorize';
   let options = {
     // local
-    // client_id: 'd6c0defbd80f3979493a',
+    client_id: 'd6c0defbd80f3979493a',
     //live
-    client_id: 'f749977a8455b627dc56',
-    // redirect_uri: 'http://localhost:3000/oauth',
-    redirect_uri: 'https://code-commcando.herokuapp.com/oauth',
+    // client_id: 'f749977a8455b627dc56',
+    redirect_uri: 'http://localhost:3000/oauth',
+    // redirect_uri: 'https://code-commcando.herokuapp.com/oauth',
     scope: 'read:user repo',
     state: 'autumn',
     allow_signup: 'true',
@@ -163,7 +163,7 @@ document.getElementById('login').addEventListener('click', () => {
     return `${key}=` + encodeURIComponent(options[key]);
   }).join('&');
   let authURL = `${githubURL}?${QueryString}`;
-  shell.openExternal(authURL);
+  window.open(authURL, authURL, 'width=300px, height=400px');
 });
 
 function clearDiv() {
