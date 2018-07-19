@@ -25,10 +25,8 @@ document.getElementById('days').addEventListener('click', (event) => {
     day = event.target.id;
     // return superagent.get(`http://api.commando.ccs.net/api/v1/readme/${day}`)
     return superagent.get(`http://localhost:3000/api/v1/readme/${day}`)
-    .set({ 'Content-Type': 'application/json', 'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjViNGZmYjFkOTA2OGNhMTJmNjkzZjIxMyIsImlhdCI6MTUzMTk4MzA1NX0.Ea3smUE3ZELnRvrUwVdBuUk6kHHDPB4pErIpDMPFel8` })
-
       .then(readme => {
-        let preEl = document.createElement('pre');
+        let preEl = document.createElement('pre')
         preEl.textContent = readme.text;
         document.getElementById('readMe').appendChild(preEl);
       });
