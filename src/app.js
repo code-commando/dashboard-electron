@@ -14,7 +14,7 @@ document.getElementById('nav-home').addEventListener('click', () => {
 document.getElementById('401n5').addEventListener('click', () => {
   clearDiv();
   $('#home').hide();
- $('#days').show();
+  $('#days').show();
   classCode = '401n5';
 });
 
@@ -24,9 +24,13 @@ document.getElementById('days').addEventListener('click', (event) => {
     $('#home').hide();
     day = event.target.id;
     // return superagent.get(`http://api.commando.ccs.net/api/v1/readme/${day}`)
+    //bring oauth to electron
+    //store as cookie
+    //grab cookie from electron sessions
     return superagent.get(`http://localhost:3000/api/v1/readme/${day}`)
+    .set({ 'Content-Type': 'application/json', 'Authorization': `Bearer ${window.sessionStorage.jwt}` })
       .then(readme => {
-        let preEl = document.createElement('pre')
+        let preEl = document.createElement('pre');
         preEl.textContent = readme.text;
         document.getElementById('readMe').appendChild(preEl);
       });
@@ -161,3 +165,7 @@ function clearDiv() {
     div.innerHTML = '';
   });
 }
+
+
+const port = process.env.PORT || 3005;
+require('./server.js').start(port);
