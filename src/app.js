@@ -25,17 +25,17 @@ document.getElementById('days').addEventListener('click', (event) => {
     day = event.target.id;
     return superagent.get('https://api.github.com/repos/code-commando/sample-class/contents/')
     //REMOVEEEEEE
-    .set({'Content-Type': 'application/json', 'Authorization': 'Bearer 8e08d9da7fa9b470d324c3748abca9d6d081a051'})
+    .set({'Content-Type': 'application/json', 'Authorization': 'Bearer 90aa9cad0650b2aa2f2eda5b097d84c28e6c22ec'})
       .then(data => {
     //REMOVEEEEEE
         return superagent.get(data.body[day-1].url)
-        .set({'Content-Type': 'application/json', 'Authorization': 'Bearer 8e08d9da7fa9b470d324c3748abca9d6d081a051'})
+        .set({'Content-Type': 'application/json', 'Authorization': 'Bearer 90aa9cad0650b2aa2f2eda5b097d84c28e6c22ec'})
           .then(contents => {
             contents.body.forEach(file => {
               if(file.name.split('.')[0] === 'README') {
                 return superagent.get(file.download_url)
     //REMOVEEEEEE
-                .set({'Content-Type': 'application/json', 'Authorization': 'Bearer 8e08d9da7fa9b470d324c3748abca9d6d081a051'})  
+                .set({'Content-Type': 'application/json', 'Authorization': 'Bearer 90aa9cad0650b2aa2f2eda5b097d84c28e6c22ec'})  
                   .then(README => {
                     document.getElementById('readMe').innerText = README.text;
                   });
@@ -47,7 +47,9 @@ document.getElementById('days').addEventListener('click', (event) => {
 });
 
 document.getElementById('nav-quiz').addEventListener('click', () => {
-  console.log('clicked');
+  console.log(day);
+  if(!day) alert('Please choose a class and day');
+  if(day === 1) alert('Don\t be cruel by giving students a quiz on day one!');
   if (day) {
     clearDiv();
     $('#home').hide();
@@ -55,7 +57,6 @@ document.getElementById('nav-quiz').addEventListener('click', () => {
       .then(questions => {
         let qObj = questions.body.results;
         qObj.forEach((question,index) => {
-          console.log(question);
           document.getElementById('quiz').appendChild(document.createElement('br'));
           let div = document.createElement('div');
 
@@ -66,7 +67,6 @@ document.getElementById('nav-quiz').addEventListener('click', () => {
           div.appendChild(questionEl);
 
           let answerList = document.createElement('ol');
-          console.log(Array.isArray(question.answers));
           if(Array.isArray(question.answers)) {
             let answersArray = question.answers;
             answersArray.forEach(choice => {
@@ -119,7 +119,7 @@ document.getElementById('nav-random').addEventListener('click', () => superagent
   $('#home').hide();
   clearDiv();
   let str = '<br /><h1>';
-  str += data.body.results;
+  str += data.body.results[0];
 
   str +='</h1>';
   let div = document.getElementById('random');
