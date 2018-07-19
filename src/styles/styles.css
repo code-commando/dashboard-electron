@@ -39,3 +39,7 @@ nav ul li:hover, #signin:hover {
   background: #FC1156;
   /* color: white */
 }
+
+h1 {
+  font-size: 96px;
+}

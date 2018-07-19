@@ -38,24 +38,47 @@
       </li>
     </ul>
   </nav>
-  <div id="home" class="clearDiv"></div>
+  <div id="home">
+    <br />
+    <a href=# id="401n5">401n5</a>
+    <br />
+    <br />
+    <a href=#> 301n5</a>
+    <br />
+    <br />
+    <a href=#>201d26</a>
+  </div>
+  <div id="days" style="display:none;">
+    <ul>
+      <br / >
+      <li><a href=# id='1' class="class-day">Day 1</a></li>
+      <br / >
+      <li><a href=# id='2' class="class-day">Day 2</a></li>
+      <br / >
+      <li><a href=# id='3' class="class-day">Day 3</a></li>
+      <br / >
+      <li><a href=# id='4' class="class-day">Day 4</a></li>
+      <br / >
+      <li><a href=# id='5' class="class-day">Day 5</a></li>
+    </ul>
+  </div>
+  <div id='readMe' class="clearDiv"></div>
   <div id="quiz" class="clearDiv"></div>
   <div id="roster" class="clearDiv"></div>
   <div id="pairs" class="clearDiv"></div>
   <div id="random" class="clearDiv"></div>
   <div id="repl" class="clearDiv"></div>
-  <button style="height:2em;width:5em;font-weight: bold;font-size: 0.75em;display:none;" id='run' type="submit">Run</button><br />
-  <h4 style="display:none;" id="results-label">Results:</h4>
-  <div style="display:none;"id="result"></div>
+  <div>
+    <button style="height:2em;width:5em;font-weight: bold;font-size: 0.75em;display:none;" id='run' type="submit">Run</button>
+    <br />
+    <h4 style="display:none;" id="results-label" class="clearDiv">Results:</h4>
+    <div style="display:none;" id="result" class="clearDiv"></div>
 </body>
 <script src="https://code.jquery.com/jquery-3.3.1.js" integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60=" crossorigin="anonymous"></script>
 <script>window.$ = window.jQuery = require('jquery');</script>
 <script src="./app.js"></script>
 <script>if (window.module) module = window.module;</script>
-<!-- // Monaco uses a custom amd loader that overrides node's require.
-        // Keep a referen ce to node's require so we can restore it after executing the amd loader file.
-        var nodeRequire = global.require; -->
-</script>
+
 <script src="../node_modules/monaco-editor/min/vs/loader.js"></script>
 <script>
   // Save Monaco's amd require and restore Node's require
@@ -83,11 +106,18 @@
   self.process.browser = true;
   var editor;
   document.getElementById('nav-repl').addEventListener('click', () => {
-    console.log('clicked!')
-    clearDiv();
+    $('#home').hide();
+    $('#days').hide();
+    (function () {
+      $('#run').hide();
+      let obj = document.getElementsByClassName('clearDiv');
+      Object.values(obj).forEach(div => {
+        div.innerHTML = '';
+      });
+    })();
 
     amdRequire(['vs/editor/editor.main'], function () {
-        editor = monaco.editor.create(document.getElementById('repl'), {
+      editor = monaco.editor.create(document.getElementById('repl'), {
         value: [
           'function x() {',
           '\tconsole.log("Hello world!");',
@@ -106,44 +136,26 @@
 
   })
 
-      $('#run').on('click', function (e) {
-        e.preventDefault();
-        $('#result').empty();
-        let data = editor.getValue();
-        let obj = {}
-        obj.code = data;
-        obj.day = '01-node-ecosystem'
-        obj.language = 'javascript';
-        // obj.sha = '563cec42a9bdbee9d7c0a2428486dcbe094f2f51'
-        console.log('data -->', obj);
-        $.ajax({
-            type: "POST",
-            url:"https://code-commando.herokuapp.com/api/v1/code",
-            data: obj,
-            success: function (data) {
-                console.log('output', data);
-                $('#result').text(JSON.stringify(data));
-            },
-        });
+  $('#run').on('click', function (e) {
+    e.preventDefault();
+    $('#result').empty();
+    let data = editor.getValue();
+    let obj = {}
+    obj.code = data;
+    obj.day = '01-node-ecosystem'
+    obj.language = 'javascript';
+    // obj.sha = '563cec42a9bdbee9d7c0a2428486dcbe094f2f51'
+    console.log('data -->', obj);
+    $.ajax({
+      type: "POST",
+      url: "http://api.commando.ccs.net/api/v1/code",
+      data: obj,
+      success: function (data) {
+        console.log('output', data);
+        $('#result').text(JSON.stringify(data));
+      },
     });
+  });
 </script>
-<script>
 
-//     function removeLineNumbers(str) {
-// strArray = str.split(' ');
-// console.log(str.split(' '))
-// let newArray = [];
-
-// for(let i = 1; i < strArray.length; i++) {
-
-//   if(strArray[i] !== '') {
-//     for(let j = i; j < strArray.length; j++) {
-//       newArray.push(strArray[j])
-//     }
-//   }
-// }
-// return newArray.join();
-// }
-
-</script>
 </html>
