@@ -155,6 +155,7 @@ document.getElementById('login').addEventListener('click', () => {
 
 function clearDiv() {
   $('#run').hide();
+  $('#resultWindow').hide();
   $('#days').hide();
   let obj = document.getElementsByClassName('clearDiv');
   Object.values(obj).forEach(div => {
