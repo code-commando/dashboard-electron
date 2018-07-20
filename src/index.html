@@ -57,7 +57,9 @@
   <div id="roster" class="clearDiv"></div>
   <div id="pairs" class="clearDiv"></div>
   <div id="random" class="clearDiv"></div>
-  <div id="repl" class="clearDiv"></div>
+  <div id="repl" class="clearDiv">
+  <ul id="files" style="display:none;"></ul> 
+  </div>
   <div>
     <button style="height:2em;width:5em;font-weight: bold;font-size: 0.75em;display:none;" id='run' type="submit">Run</button>
     <br />
@@ -95,36 +97,36 @@
   // workaround monaco-typescript not understanding the environment
   self.process.browser = true;
   var editor;
-  document.getElementById('nav-repl').addEventListener('click', () => {
-    $('#home').hide();
-    $('#days').hide();
-    (function () {
-      $('#run').hide();
-      let obj = document.getElementsByClassName('clearDiv');
-      Object.values(obj).forEach(div => {
-        div.innerHTML = '';
-      });
-    })();
+  // document.getElementById('nav-repl').addEventListener('click', () => {
+  //   $('#home').hide();
+  //   $('#days').hide();
+  //   (function () {
+  //     $('#run').hide();
+  //     let obj = document.getElementsByClassName('clearDiv');
+  //     Object.values(obj).forEach(div => {
+  //       div.innerHTML = '';
+  //     });
+  //   })();
 
-    amdRequire(['vs/editor/editor.main'], function () {
-      editor = monaco.editor.create(document.getElementById('repl'), {
-        value: [
-          'function x() {',
-          '\tconsole.log("Hello world!");',
-          '}'
-        ].join('\n'),
-        language: 'javascript'
-      });
-    });
-    $('#repl').css({
-      'width': '800px',
-      'height': '600px',
-    })
-    $('#run').show()
-    $('#results-label').show();
-    $('#result').show();
+  //   amdRequire(['vs/editor/editor.main'], function () {
+  //     editor = monaco.editor.create(document.getElementById('repl'), {
+  //       value: [
+  //         'function x() {',
+  //         '\tconsole.log("Hello world!");',
+  //         '}'
+  //       ].join('\n'),
+  //       language: 'javascript'
+  //     });
+  //   });
+  //   $('#repl').css({
+  //     'width': '800px',
+  //     'height': '600px',
+  //   })
+  //   $('#run').show()
+  //   $('#results-label').show();
+  //   $('#result').show();
 
-  })
+  // })
 
   $('#run').on('click', function (e) {
     e.preventDefault();
@@ -133,6 +135,7 @@
     let obj = {}
     obj.code = data;
     obj.day = '01-node-ecosystem'
+    // line 137: change to grab from textContent of event click;
     obj.language = 'javascript';
     // obj.sha = '563cec42a9bdbee9d7c0a2428486dcbe094f2f51'
     console.log('data -->', obj);

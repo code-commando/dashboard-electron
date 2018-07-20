@@ -197,6 +197,19 @@ $('#new-class').on('submit', function (e) {
     });
 });
 
+$('#nav-repl').on('click', () => {
+  clearDiv();
+  $('#home').hide();
+  superagent.get(`http://localhost:3000/api/v1/code/${day}?classCode=` + classCode)
+  .set({ 'Content-Type': 'application/json', 'Authorization': `Bearer ${window.sessionStorage.jwt}` })
+    .then(data => {
+      console.log(data.body);
+      let files = data.body;
+      for(let i = 0; i < files.length; i++) {
+        $('#repl').append(`<br /><li id="${files[i].link}">${files[i].file}</li>`);
+      }
+    });
+});
 
 function clearDiv() {
   $('#run').hide();
