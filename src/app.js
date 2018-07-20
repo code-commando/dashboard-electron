@@ -5,6 +5,7 @@ import superagent from 'superagent';
 const shell = require('electron').shell;
 let day;
 let classCode;
+let apiUrl;
 
 
 
@@ -17,15 +18,25 @@ document.getElementById('nav-home').addEventListener('click', () => {
     .then(data => {
       console.log(data.body.courses);
       data.body.courses.forEach(course => {
-        $('#courses').append(`<br /><a href=# id="${course.classCode}" class="course-class">${course.classCode}</a>`);
+        $('#courses').append(`<br /><a href=# id="${course.apiLink}" class="course-class">${course.classCode}</a><br />`);
       });
     });
 });
 
 document.getElementById('courses').addEventListener('click', event => {
   if (event.target.className === 'course-class') {
-    classCode = event.target.id;
+    apiUrl = event.target.id;
+    classCode = event.target.textContent;
     $('#home').hide();
+    superagent.get(apiUrl)
+      .then(data => {
+        let str = '<ul>';
+        for(let i = 0; i < data.body.length; i++) {
+          str += `<br /><li><a href=# id='${i+1}' class="class-day">Day ${i+1}</a></li>`;
+        }
+        str += '</ul>';
+        $('#days').html(str);
+      })
     $('#days').show();
   }
 })
@@ -36,10 +47,6 @@ document.getElementById('days').addEventListener('click', (event) => {
     clearDiv();
     $('#home').hide();
     day = event.target.id;
-    // return superagent.get(`http://api.commando.ccs.net/api/v1/readme/${day}`)
-    //bring oauth to electron
-    //store as cookie
-    //grab cookie from electron sessions
     return superagent.get(`http://localhost:3000/api/v1/readme/${day}`)
       .set({ 'Content-Type': 'application/json', 'Authorization': `Bearer ${window.sessionStorage.jwt}` })
       .then(readme => {
@@ -178,7 +185,7 @@ $('#new-class').on('submit', function (e) {
     .set({ 'Content-Type': 'application/json', 'Authorization': `Bearer ${window.sessionStorage.jwt}` })
     .send({ classCode, githubRepo })
     .then((data) => {
-      $('#courses').append(`<a href=# id=${data.body.apiLink}>${data.body.classCode}<a>`);
+      $('#courses').append(`<a href=# id=${data.body.apiLink}>${data.body.classCode}<a><br />`);
       $('#suc-message').text('Success');
     });
 });
