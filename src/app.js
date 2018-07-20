@@ -9,7 +9,7 @@ let apiUrl;
 let dayName;
 
 document.getElementById('nav-home').addEventListener('click', () => {
-  if(!window.sessionStorage.jwt) return alert('please sign up / log in first');
+  if (!window.sessionStorage.jwt) return alert('please sign up / log in first');
   clearDiv();
   $('#home').show();
   $('#new-class').show();
@@ -63,11 +63,12 @@ document.getElementById('days').addEventListener('click', (event) => {
 document.getElementById('nav-quiz').addEventListener('click', () => {
   console.log(day);
   if (!day) return alert('Please choose a class and day');
-  if (day === 1) return alert('Don\t be cruel by giving students a quiz on day one!');
+  if (day == 1) return alert('Don\t be cruel by giving students a quiz on day one!');
   if (day) {
     clearDiv();
     $('#home').hide();
     return superagent.get(`http://api.commando.ccs.net/api/v1/quiz/${day}`)
+      .set({ 'Content-Type': 'application/json', 'Authorization': `Bearer ${window.sessionStorage.jwt}` })
       .then(questions => {
         let qObj = questions.body.results;
         qObj.forEach((question, index) => {
@@ -119,18 +120,18 @@ document.getElementById('nav-pairs').addEventListener('click', () => {
   if (!classCode) return alert('Please choose a class.');
 
   superagent.get('http://api.commando.ccs.net/api/v1/roster/pairs?classCode=' + classCode)
-  .then(data => {
-    $('#home').hide();
-    clearDiv();
-    let str = '<ul>';
-    let pairs = data.body.results;
-    for (let student of pairs) {
-      str += `<br /><li>${student}</li>`;
-    }
-    str += '</ul>';
-    let div = document.getElementById('pairs');
-    div.innerHTML = str;
-  });
+    .then(data => {
+      $('#home').hide();
+      clearDiv();
+      let str = '<ul>';
+      let pairs = data.body.results;
+      for (let student of pairs) {
+        str += `<br /><li>${student}</li>`;
+      }
+      str += '</ul>';
+      let div = document.getElementById('pairs');
+      div.innerHTML = str;
+    });
 });
 
 
@@ -205,16 +206,16 @@ $('#new-class').on('submit', function (e) {
 
 $('#nav-repl').on('click', () => {
   if (!classCode) return alert('Please Choose a class');
-  if(!day) return alert('Please pick a day');
+  if (!day) return alert('Please pick a day');
   clearDiv();
   $('#home').hide();
   superagent.get(`http://localhost:3000/api/v1/code/${day}?classCode=` + classCode)
-  .set({ 'Content-Type': 'application/json', 'Authorization': `Bearer ${window.sessionStorage.jwt}` })
+    .set({ 'Content-Type': 'application/json', 'Authorization': `Bearer ${window.sessionStorage.jwt}` })
     .then(data => {
       $('#files').append(`<ul id="files"></ul>`);
       console.log(data.body);
       let files = data.body;
-      for(let i = 0; i < files.length; i++) {
+      for (let i = 0; i < files.length; i++) {
         $('#files ul').append(`<br /><li id="${files[i].link}">${files[i].file}</li>`);
       }
       $('#files ul').append(`<br /><li id="new-file">Create A New File</li>`);
