@@ -28,9 +28,6 @@
       <li id="nav-repl">
         <a>Repl</a>
       </li>
-      <li>
-          <a href='http://localhost:3000/test'>test</a>
-        </li>
     </ul>
     <ul id="auth">
       <li id="login">
@@ -42,28 +39,18 @@
     </ul>
   </nav>
   <div id="home">
-    <br />
-    <a href=# id="401n5">401n5</a>
-    <br />
-    <br />
-    <a href=#> 301n5</a>
-    <br />
-    <br />
-    <a href=#>201d26</a>
+    <div id="courses" class="clearDiv"></div>
+    <form id='new-class' style='display:none;'>
+      Class Code
+      <input type="text" name="classCode">
+      <br> Class Repo
+      <input type="text" name="githubRepo">
+      <br>
+      <input type="submit" value="Submit">
+    </form>
+    <p id='suc-message'></p>
   </div>
   <div id="days" style="display:none;">
-    <ul>
-      <br / >
-      <li><a href=# id='1' class="class-day">Day 1</a></li>
-      <br / >
-      <li><a href=# id='2' class="class-day">Day 2</a></li>
-      <br / >
-      <li><a href=# id='3' class="class-day">Day 3</a></li>
-      <br / >
-      <li><a href=# id='4' class="class-day">Day 4</a></li>
-      <br / >
-      <li><a href=# id='5' class="class-day">Day 5</a></li>
-    </ul>
   </div>
   <div id='readMe' class="clearDiv"></div>
   <div id="quiz" class="clearDiv"></div>
@@ -71,8 +58,9 @@
   <div id="pairs" class="clearDiv"></div>
   <div id="random" class="clearDiv"></div>
   <textarea readonly class="clearDiv" id="resultWindow" style="display:none" rows="46" cols="77">Console Output</textarea>
-  <div id="repl" class="clearDiv"></div>
-  
+  <div id="repl" class="clearDiv">
+  <ul id="files" style="display:none;"></ul> 
+  </div>
   <div>
     <button style="height:2em;width:5em;font-weight: bold;font-size: 0.75em;display:none;" id='run' type="submit">Run</button>
 </body>
@@ -107,17 +95,16 @@
   // workaround monaco-typescript not understanding the environment
   self.process.browser = true;
   var editor;
-  document.getElementById('nav-repl').addEventListener('click', () => {
-    $('#home').hide();
-    $('#days').hide();
-    (function () {
-      $('#run').hide();
-      let obj = document.getElementsByClassName('clearDiv');
-      Object.values(obj).forEach(div => {
-        div.innerHTML = '';
-      });
-    })();
-
+  // document.getElementById('nav-repl').addEventListener('click', () => {
+  //   $('#home').hide();
+  //   $('#days').hide();
+  //   (function () {
+  //     $('#run').hide();
+  //     let obj = document.getElementsByClassName('clearDiv');
+  //     Object.values(obj).forEach(div => {
+  //       div.innerHTML = '';
+  //     });
+  //   })();
     amdRequire(['vs/editor/editor.main'], function () {
       editor = monaco.editor.create(document.getElementById('repl'), {
         value: [
@@ -149,6 +136,7 @@
     let obj = {}
     obj.code = data;
     obj.day = '01-node-ecosystem'
+    // line 137: change to grab from textContent of event click;
     obj.language = 'javascript';
     // obj.sha = '563cec42a9bdbee9d7c0a2428486dcbe094f2f51'
     console.log('data -->', obj);
