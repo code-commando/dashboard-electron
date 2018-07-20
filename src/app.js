@@ -6,23 +6,20 @@ import superagent from 'superagent';
 let day;
 let classCode;
 let apiUrl;
-
-
+let dayName;
 
 
 document.getElementById('nav-home').addEventListener('click', () => {
   clearDiv();
   $('#home').show();
+  $('#new-class').show();
   superagent.get('http://localhost:3000/api/v1/user')
-  // superagent.get('http://api.commando.ccs.net/api/v1/user')
+    // superagent.get('http://api.commando.ccs.net/api/v1/user')
     .set({ 'Content-Type': 'application/json', 'Authorization': `Bearer ${window.sessionStorage.jwt}` })
     .then(data => {
       console.log(data.body.courses);
       data.body.courses.forEach(course => {
         $('#courses').append(`<br /><a href=# id="${course.apiLink}" class="course-class">${course.classCode}</a><br />`);
-
-        $('#new-class').show();
-
       });
     });
 });
@@ -35,8 +32,8 @@ document.getElementById('courses').addEventListener('click', event => {
     superagent.get(apiUrl)
       .then(data => {
         let str = '<ul>';
-        for(let i = 0; i < data.body.length; i++) {
-          str += `<br /><li><a href=# id='${i+1}' class="class-day">Day ${i+1}</a></li>`;
+        for (let i = 0; i < data.body.length; i++) {
+          str += `<br /><li><a href=# id='${i + 1}' class="class-day">${data.body[i].name}</a></li>`;
         }
         str += '</ul>';
         $('#days').html(str);
@@ -51,8 +48,9 @@ document.getElementById('days').addEventListener('click', (event) => {
     clearDiv();
     $('#home').hide();
     day = event.target.id;
+    dayName = event.target.textContent;
     return superagent.get(`http://localhost:3000/api/v1/readme/${day}?classCode=${classCode}`)
-    // return superagent.get(`http://api.commando.ccs.net/api/v1/readme/${day}`)
+      // return superagent.get(`http://api.commando.ccs.net/api/v1/readme/${day}`)
       .set({ 'Content-Type': 'application/json', 'Authorization': `Bearer ${window.sessionStorage.jwt}` })
       .then(readme => {
         let preEl = document.createElement('pre');
@@ -130,17 +128,21 @@ document.getElementById('nav-pairs').addEventListener('click', () => superagent.
   }));
 
 
-document.getElementById('nav-random').addEventListener('click', () => superagent.get('http://api.commando.ccs.net/api/v1/roster/random?classCode=' + classCode)
-  .then(data => {
-    $('#home').hide();
-    clearDiv();
-    let str = '<br /><h1>';
-    str += data.body.results[0];
+document.getElementById('nav-random').addEventListener('click', () => {
+  if (!classCode) alert('Please choose a class.');
 
-    str += '</h1>';
-    let div = document.getElementById('random');
-    div.innerHTML = str;
-  }));
+  superagent.get('http://api.commando.ccs.net/api/v1/roster/random?classCode=' + classCode)
+    .then(data => {
+      $('#home').hide();
+      clearDiv();
+      let str = '<br /><h1>';
+      str += data.body.results[0];
+
+      str += '</h1>';
+      let div = document.getElementById('random');
+      div.innerHTML = str;
+    });
+});
 
 document.getElementById('signup').addEventListener('click', () => {
   let githubURL = 'https://github.com/login/oauth/authorize';
