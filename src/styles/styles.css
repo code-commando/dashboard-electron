@@ -44,6 +44,6 @@ h1 {
   font-size: 96px;
 }
 
-ol {
-  
+#files ul li {
+  cursor: pointer;
 }

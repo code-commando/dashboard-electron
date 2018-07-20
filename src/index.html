@@ -57,10 +57,10 @@
   <div id="roster" class="clearDiv"></div>
   <div id="pairs" class="clearDiv"></div>
   <div id="random" class="clearDiv"></div>
-  <textarea readonly class="clearDiv" id="resultWindow" style="display:none" rows="46" cols="77">Console Output</textarea>
-  <div id="repl" class="clearDiv">
-  <ul id="files" style="display:none;"></ul> 
-  </div>
+  <textarea readonly class="clearDiv" id="resultWindow" style="display:none; resize:both;" rows="34" cols="50">Console Output</textarea>
+  <div id="repl" class="clearDiv"></div>
+
+  <div id="files" class="clearDiv"></div>
   <div>
     <button style="height:2em;width:5em;font-weight: bold;font-size: 0.75em;display:none;" id='run' type="submit">Run</button>
 </body>
@@ -77,6 +77,7 @@
 </script>
 
 <script>
+  import superagent from 'superagent';
   // require node modules before loader.js comes in
   var path = require('path');
 
@@ -95,39 +96,59 @@
   // workaround monaco-typescript not understanding the environment
   self.process.browser = true;
   var editor;
-  // document.getElementById('nav-repl').addEventListener('click', () => {
-  //   $('#home').hide();
-  //   $('#days').hide();
-  //   (function () {
-  //     $('#run').hide();
-  //     let obj = document.getElementsByClassName('clearDiv');
-  //     Object.values(obj).forEach(div => {
-  //       div.innerHTML = '';
-  //     });
-  //   })();
+
+
+  $('#files').on('click', (event) => {
+    if (event.target.nodeName === 'LI') {
+      if (event.target.id === 'new-file') {
+        runEditor('// Create your code and hit run at the end');
+      } else {
+        return superagent.get(event.target.id)
+          .then(data => {
+            runEditor(data.text)
+          });
+      }
+    }
+
+  });
+
+  function runEditor(data) {
+
+    console.log(data.text);
+    //   $('#home').hide();
+    $('#days').hide();
+    (function () {
+      $('#run').hide();
+      let obj = document.getElementsByClassName('clearDiv');
+      Object.values(obj).forEach(div => {
+        div.innerHTML = '';
+      });
+    })();
+
     amdRequire(['vs/editor/editor.main'], function () {
       editor = monaco.editor.create(document.getElementById('repl'), {
         value: [
-          'function x() {',
-          '\tconsole.log("Hello world!");',
-          '}'
+          data
         ].join('\n'),
         language: 'javascript'
       });
     });
     $('#repl').css({
-      'width': '800px',
-      'height': '600px',
+      'width': '400',
+      'height': '467',
+      'float': 'left',
+      'clear': 'left',
     })
     $('#resultWindow').css({
-      'float': 'right',
+      // 'float': 'left',
       'background-color': 'black',
       'color': 'white',
     })
     $('#resultWindow').show()
     $('#resultWindow').text('Output Console')
     $('#run').show()
-  })
+
+  }
 
   $('#run').on('click', function (e) {
     e.preventDefault();
@@ -145,9 +166,9 @@
       url: "http://api.commando.ccs.net/api/v1/code",
       data: obj,
       success: function (data) {
-        if(obj.language==='javascript'){
-                data = JSON.stringify(data)
-            }
+        if (obj.language === 'javascript') {
+          data = JSON.stringify(data)
+        }
         console.log('output', data);
         $('#resultWindow').text(data);
       },
