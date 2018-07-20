@@ -57,14 +57,12 @@
   <div id="roster" class="clearDiv"></div>
   <div id="pairs" class="clearDiv"></div>
   <div id="random" class="clearDiv"></div>
+  <textarea readonly class="clearDiv" id="resultWindow" style="display:none" rows="46" cols="77">Console Output</textarea>
   <div id="repl" class="clearDiv">
   <ul id="files" style="display:none;"></ul> 
   </div>
   <div>
     <button style="height:2em;width:5em;font-weight: bold;font-size: 0.75em;display:none;" id='run' type="submit">Run</button>
-    <br />
-    <h4 style="display:none;" id="results-label" class="clearDiv">Results:</h4>
-    <div style="display:none;" id="result" class="clearDiv"></div>
 </body>
 <script src="https://code.jquery.com/jquery-3.3.1.js" integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60=" crossorigin="anonymous"></script>
 <script>window.$ = window.jQuery = require('jquery');</script>
@@ -107,30 +105,33 @@
   //       div.innerHTML = '';
   //     });
   //   })();
-
-  //   amdRequire(['vs/editor/editor.main'], function () {
-  //     editor = monaco.editor.create(document.getElementById('repl'), {
-  //       value: [
-  //         'function x() {',
-  //         '\tconsole.log("Hello world!");',
-  //         '}'
-  //       ].join('\n'),
-  //       language: 'javascript'
-  //     });
-  //   });
-  //   $('#repl').css({
-  //     'width': '800px',
-  //     'height': '600px',
-  //   })
-  //   $('#run').show()
-  //   $('#results-label').show();
-  //   $('#result').show();
-
-  // })
+    amdRequire(['vs/editor/editor.main'], function () {
+      editor = monaco.editor.create(document.getElementById('repl'), {
+        value: [
+          'function x() {',
+          '\tconsole.log("Hello world!");',
+          '}'
+        ].join('\n'),
+        language: 'javascript'
+      });
+    });
+    $('#repl').css({
+      'width': '800px',
+      'height': '600px',
+    })
+    $('#resultWindow').css({
+      'float': 'right',
+      'background-color': 'black',
+      'color': 'white',
+    })
+    $('#resultWindow').show()
+    $('#resultWindow').text('Output Console')
+    $('#run').show()
+  })
 
   $('#run').on('click', function (e) {
     e.preventDefault();
-    $('#result').empty();
+    $('#resultWindow').empty();
     let data = editor.getValue();
     let obj = {}
     obj.code = data;
@@ -144,8 +145,11 @@
       url: "http://api.commando.ccs.net/api/v1/code",
       data: obj,
       success: function (data) {
+        if(obj.language==='javascript'){
+                data = JSON.stringify(data)
+            }
         console.log('output', data);
-        $('#result').text(JSON.stringify(data));
+        $('#resultWindow').text(data);
       },
     });
   });
