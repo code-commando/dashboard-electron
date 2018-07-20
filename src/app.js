@@ -2,7 +2,7 @@
 
 require('babel-register');
 import superagent from 'superagent';
-const shell = require('electron').shell;
+
 let day;
 let classCode;
 let apiUrl;
@@ -14,11 +14,15 @@ document.getElementById('nav-home').addEventListener('click', () => {
   clearDiv();
   $('#home').show();
   superagent.get('http://localhost:3000/api/v1/user')
+  // superagent.get('http://api.commando.ccs.net/api/v1/user')
     .set({ 'Content-Type': 'application/json', 'Authorization': `Bearer ${window.sessionStorage.jwt}` })
     .then(data => {
       console.log(data.body.courses);
       data.body.courses.forEach(course => {
         $('#courses').append(`<br /><a href=# id="${course.apiLink}" class="course-class">${course.classCode}</a><br />`);
+
+        $('#new-class').show();
+
       });
     });
 });
@@ -36,10 +40,10 @@ document.getElementById('courses').addEventListener('click', event => {
         }
         str += '</ul>';
         $('#days').html(str);
-      })
+      });
     $('#days').show();
   }
-})
+});
 
 
 document.getElementById('days').addEventListener('click', (event) => {
@@ -47,7 +51,8 @@ document.getElementById('days').addEventListener('click', (event) => {
     clearDiv();
     $('#home').hide();
     day = event.target.id;
-    return superagent.get(`http://localhost:3000/api/v1/readme/${day}`)
+    return superagent.get(`http://localhost:3000/api/v1/readme/${day}?classCode=${classCode}`)
+    // return superagent.get(`http://api.commando.ccs.net/api/v1/readme/${day}`)
       .set({ 'Content-Type': 'application/json', 'Authorization': `Bearer ${window.sessionStorage.jwt}` })
       .then(readme => {
         let preEl = document.createElement('pre');
@@ -95,7 +100,7 @@ document.getElementById('nav-quiz').addEventListener('click', () => {
 document.getElementById('nav-roster').addEventListener('click', () => {
   $('#home').hide();
   clearDiv();
-  return superagent.get('http://api.commando.ccs.net/api/v1/roster')
+  return superagent.get(`http://api.commando.ccs.net/api/v1/roster?classCode=${classCode}`)
     .then(data => {
       let str = '<ul>';
       let roster = data.body.results;
@@ -110,7 +115,7 @@ document.getElementById('nav-roster').addEventListener('click', () => {
     });
 });
 
-document.getElementById('nav-pairs').addEventListener('click', () => superagent.get('http://api.commando.ccs.net/api/v1/roster/pairs')
+document.getElementById('nav-pairs').addEventListener('click', () => superagent.get('http://api.commando.ccs.net/api/v1/roster/pairs?classCode=' + classCode)
   .then(data => {
     $('#home').hide();
     clearDiv();
@@ -125,7 +130,7 @@ document.getElementById('nav-pairs').addEventListener('click', () => superagent.
   }));
 
 
-document.getElementById('nav-random').addEventListener('click', () => superagent.get('http://api.commando.ccs.net/api/v1/roster/random')
+document.getElementById('nav-random').addEventListener('click', () => superagent.get('http://api.commando.ccs.net/api/v1/roster/random?classCode=' + classCode)
   .then(data => {
     $('#home').hide();
     clearDiv();
@@ -145,16 +150,16 @@ document.getElementById('signup').addEventListener('click', () => {
     //live
     // client_id: 'f749977a8455b627dc56',
     redirect_uri: 'http://localhost:3000/oauth',
-    // redirect_uri: 'http://api.commando.ccs.net/oauth',
+    // redirect_uri: 'https://code-commcando.herokuapp.com/oauth',
     scope: 'read:user repo',
     state: 'autumn',
     allow_signup: 'true',
   };
-  let QueryString = Object.keys(options).map((key, i) => {
+  let QueryString = Object.keys(options).map((key) => {
     return `${key}=` + encodeURIComponent(options[key]);
   }).join('&');
   let authURL = `${githubURL}?${QueryString}`;
-  shell.openURL(authURL);
+  window.open(authURL, authURL, 'width=300px, height=400px');
 });
 
 document.getElementById('login').addEventListener('click', () => {
@@ -170,7 +175,7 @@ document.getElementById('login').addEventListener('click', () => {
     state: 'autumn',
     allow_signup: 'true',
   };
-  let QueryString = Object.keys(options).map((key, i) => {
+  let QueryString = Object.keys(options).map((key) => {
     return `${key}=` + encodeURIComponent(options[key]);
   }).join('&');
   let authURL = `${githubURL}?${QueryString}`;
@@ -185,7 +190,7 @@ $('#new-class').on('submit', function (e) {
     .set({ 'Content-Type': 'application/json', 'Authorization': `Bearer ${window.sessionStorage.jwt}` })
     .send({ classCode, githubRepo })
     .then((data) => {
-      $('#courses').append(`<a href=# id=${data.body.apiLink}>${data.body.classCode}<a><br />`);
+      $('#courses').append(`<br /><a href=# id="${data.body.apiLink}">${data.body.classCode}<a><br />`);
       $('#suc-message').text('Success');
     });
 });
