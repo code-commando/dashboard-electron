@@ -62,8 +62,8 @@ document.getElementById('days').addEventListener('click', (event) => {
 
 document.getElementById('nav-quiz').addEventListener('click', () => {
   console.log(day);
-  if (!day) alert('Please choose a class and day');
-  if (day === 1) alert('Don\t be cruel by giving students a quiz on day one!');
+  if (!day) return alert('Please choose a class and day');
+  if (day === 1) return alert('Don\t be cruel by giving students a quiz on day one!');
   if (day) {
     clearDiv();
     $('#home').hide();
@@ -129,7 +129,7 @@ document.getElementById('nav-pairs').addEventListener('click', () => superagent.
 
 
 document.getElementById('nav-random').addEventListener('click', () => {
-  if (!classCode) alert('Please choose a class.');
+  if (!classCode) return alert('Please choose a class.');
 
   superagent.get('http://api.commando.ccs.net/api/v1/roster/random?classCode=' + classCode)
     .then(data => {
@@ -198,6 +198,8 @@ $('#new-class').on('submit', function (e) {
 });
 
 $('#nav-repl').on('click', () => {
+  if (!classCode) return alert('Please Choose a class');
+  if(!day) return alert('Please pick a day');
   clearDiv();
   $('#home').hide();
   superagent.get(`http://localhost:3000/api/v1/code/${day}?classCode=` + classCode)
