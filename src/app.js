@@ -216,7 +216,7 @@ $('#nav-repl').on('click', () => {
       console.log(data.body);
       let files = data.body;
       for (let i = 0; i < files.length; i++) {
-        $('#files ul').append(`<br /><li id="${files[i].link}">${files[i].file}</li>`);
+        $('#files ul').append(`<br /><li data-sha="${files[i].sha}"id="${files[i].link}">${files[i].file}</li>`);
       }
       $('#files ul').append(`<br /><li id="new-file">Create A New File</li>`);
     });

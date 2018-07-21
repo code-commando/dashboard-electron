@@ -97,12 +97,15 @@
   self.process.browser = true;
   var editor;
 
+  let sha;
 
   $('#files').on('click', (event) => {
     if (event.target.nodeName === 'LI') {
       if (event.target.id === 'new-file') {
+        sha = null;
         runEditor('// Create your code and hit run at the end');
       } else {
+        sha = event.target.getAttribute('data-sha')
         return superagent.get(event.target.id)
           .then(data => {
             runEditor(data.text)
@@ -156,31 +159,19 @@
     let data = editor.getValue();
     let obj = {}
     obj.code = data;
-    console.log(data)
-    obj.day = '01-node-ecosystem'
-    // line 137: change to grab from textContent of event click;
+
+    obj.day = dayName;
     obj.language = 'javascript';
-    // obj.sha = '563cec42a9bdbee9d7c0a2428486dcbe094f2f51'
+    if (sha) obj.sha = sha;
+
     console.log('data -->', obj);
-    superagent.post('http://api.commando.ccs.net/api/v1/code')
+    superagent.post(`http://localhost:3000/api/v1/code?classCode=${classCode}`)
+      .set({ 'Content-Type': 'application/json', 'Authorization': `Bearer ${window.sessionStorage.jwt}` })
       .send(obj)
       .then(data => {
-        if(data.body.traceback) $('#resultWindow').text(data.body.traceback);
-        if(data.body.return) $('#resultWindow').text(data.body.return);
+        console.log(data.body);
+        $('#resultWindow').text(data.text);
       })
-     
-    // $.ajax({
-    //   type: "POST",
-    //   url: "http://api.commando.ccs.net/api/v1/code",
-    //   data: obj,
-    //   success: function (data) {
-    //     if (obj.language === 'javascript') {
-    //       data = JSON.stringify(data)
-    //     }
-    //     console.log('output', data);
-    //     $('#resultWindow').text(data);
-    //   },
-    // });
   });
 </script>
 
