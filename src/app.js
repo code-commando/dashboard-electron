@@ -13,8 +13,8 @@ document.getElementById('nav-home').addEventListener('click', () => {
   clearDiv();
   $('#home').show();
   $('#new-class').show();
-  superagent.get('http://localhost:3000/api/v1/user')
-    // superagent.get('http://api.commando.ccs.net/api/v1/user')
+  // superagent.get('http://localhost:3000/api/v1/user')
+  superagent.get('http://api.commando.ccs.net/api/v1/user')
     .set({ 'Content-Type': 'application/json', 'Authorization': `Bearer ${window.sessionStorage.jwt}` })
     .then(data => {
       console.log(data.body.courses);
@@ -49,8 +49,8 @@ document.getElementById('days').addEventListener('click', (event) => {
     $('#home').hide();
     day = event.target.id;
     dayName = event.target.textContent;
-    return superagent.get(`http://localhost:3000/api/v1/readme/${day}?classCode=${classCode}`)
-      // return superagent.get(`http://api.commando.ccs.net/api/v1/readme/${day}`)
+    // return superagent.get(`http://localhost:3000/api/v1/readme/${day}?classCode=${classCode}`)
+    return superagent.get(`http://api.commando.ccs.net/api/v1/readme/${day}`)
       .set({ 'Content-Type': 'application/json', 'Authorization': `Bearer ${window.sessionStorage.jwt}` })
       .then(readme => {
         let preEl = document.createElement('pre');
@@ -155,11 +155,11 @@ document.getElementById('signup').addEventListener('click', () => {
   let githubURL = 'https://github.com/login/oauth/authorize';
   let options = {
     // local
-    client_id: 'd6c0defbd80f3979493a',
+    // client_id: 'd6c0defbd80f3979493a',
+    // redirect_uri: 'http://localhost:3000/oauth',
     //live
-    // client_id: 'f749977a8455b627dc56',
-    redirect_uri: 'http://localhost:3000/oauth',
-    // redirect_uri: 'https://code-commcando.herokuapp.com/oauth',
+    client_id: 'f749977a8455b627dc56',
+    redirect_uri: 'http://api.commando.ccs.net/oauth',
     scope: 'read:user repo',
     state: 'autumn',
     allow_signup: 'true',
@@ -175,11 +175,11 @@ document.getElementById('login').addEventListener('click', () => {
   let githubURL = 'https://github.com/login/oauth/authorize';
   let options = {
     // local
-    client_id: 'd6c0defbd80f3979493a',
+    // client_id: 'd6c0defbd80f3979493a',
+    // redirect_uri: 'http://localhost:3000/oauth',
     //live
-    // client_id: 'f749977a8455b627dc56',
-    redirect_uri: 'http://localhost:3000/oauth',
-    // redirect_uri: 'https://code-commcando.herokuapp.com/oauth',
+    client_id: 'f749977a8455b627dc56',
+    redirect_uri: 'http://api.commando.ccs.net/oauth',
     scope: 'read:user repo',
     state: 'autumn',
     allow_signup: 'true',
@@ -195,7 +195,8 @@ $('#new-class').on('submit', function (e) {
   let classCode = $(this).find('[name=classCode]').val();
   let githubRepo = $(this).find('[name=githubRepo]').val();
   e.preventDefault();
-  return superagent.post('localhost:3000/api/v1/classes')
+  // return superagent.post('localhost:3000/api/v1/classes')
+  return superagent.post('http://api.commando.ccs.net/api/v1/classes')
     .set({ 'Content-Type': 'application/json', 'Authorization': `Bearer ${window.sessionStorage.jwt}` })
     .send({ classCode, githubRepo })
     .then((data) => {
@@ -209,7 +210,8 @@ $('#nav-repl').on('click', () => {
   if (!day) return alert('Please pick a day');
   clearDiv();
   $('#home').hide();
-  superagent.get(`http://localhost:3000/api/v1/code/${day}?classCode=` + classCode)
+  // superagent.get(`http://localhost:3000/api/v1/code/${day}?classCode=` + classCode)
+  superagent.get(`http://api.commando.ccs.net/api/v1/code${day}?classCode=${classCode}`)
     .set({ 'Content-Type': 'application/json', 'Authorization': `Bearer ${window.sessionStorage.jwt}` })
     .then(data => {
       $('#files').append(`<ul id="files"></ul>`);

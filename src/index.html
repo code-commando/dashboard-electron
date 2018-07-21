@@ -98,14 +98,20 @@
   var editor;
 
   let sha;
+  let filename;
 
   $('#files').on('click', (event) => {
     if (event.target.nodeName === 'LI') {
       if (event.target.id === 'new-file') {
         sha = null;
+        filename = null;
         runEditor('// Create your code and hit run at the end');
       } else {
+        console.log(event.target);
+        filename = event.target.textContent;
+        console.log('filename is', filename)
         sha = event.target.getAttribute('data-sha')
+        console.log('sha is ', sha);
         return superagent.get(event.target.id)
           .then(data => {
             runEditor(data.text)
@@ -162,16 +168,25 @@
 
     obj.day = dayName;
     obj.language = 'javascript';
-    if (sha) obj.sha = sha;
 
-    console.log('data -->', obj);
-    superagent.post(`http://localhost:3000/api/v1/code?classCode=${classCode}`)
-      .set({ 'Content-Type': 'application/json', 'Authorization': `Bearer ${window.sessionStorage.jwt}` })
-      .send(obj)
-      .then(data => {
-        console.log(data.body);
-        $('#resultWindow').text(data.text);
-      })
+    if (sha) obj.sha = sha;
+    if (filename) obj.fileName = filename;
+
+  console.log(obj);
+     $.ajax({
+      type: "POST",
+      // url: `http://localhost:3000/api/v1/code?classCode=${classCode}`,
+      url: `http://api.commando.ccs.net/api/v1/code?classCode=${classCode}`,
+      data: obj,
+      headers: {'Authorization': `Bearer ${window.sessionStorage.jwt}`},
+      success: function (data) {
+        if(data.error){
+                data = JSON.stringify(data.error)
+            }
+        console.log('output', data);
+        $('#resultWindow').text(data);
+      },
+    });
   });
 </script>
 
