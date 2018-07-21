@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <link rel="stylesheet" type="text/css" media="screen" href="./styles/styles.css" />
+  <title>Code Commando</title>
+</head>
+
+<body>
+  <nav>
+    <ul id="navigation">
+      <li id="nav-home">
+        <a>Home</a>
+      </li>
+      <li id="nav-quiz">
+        <a>Quiz</a>
+      </li>
+      <li id="nav-roster">
+        <a>Roster</a>
+      </li>
+      <li id="nav-random">
+        <a>Random</a>
+      </li>
+      <li id="nav-pairs">
+        <a>Pairs</a>
+      </li>
+      <li id="nav-repl">
+        <a>Repl</a>
+      </li>
+    </ul>
+    <ul id="auth">
+      <li id="login">
+        <a>Log In</a>
+      </li>
+      <li id="signup">
+        <a>Sign Up</a>
+      </li>
+    </ul>
+  </nav>
+  <div id="home">
+    <div id="courses" class="clearDiv"></div>
+    <form id='new-class' style='display:none;'>
+      Class Code
+      <input type="text" name="classCode">
+      <br> Class Repo
+      <input type="text" name="githubRepo">
+      <br>
+      <input type="submit" value="Submit">
+    </form>
+    <p id='suc-message'></p>
+  </div>
+  <div id="days" style="display:none;">
+  </div>
+  <div id='readMe' class="clearDiv"></div>
+  <div id="quiz" class="clearDiv"></div>
+  <div id="roster" class="clearDiv"></div>
+  <div id="pairs" class="clearDiv"></div>
+  <div id="random" class="clearDiv"></div>
+  <textarea readonly class="clearDiv" id="resultWindow" style="display:none; resize:both;" rows="34" cols="50">Console Output</textarea>
+  <div id="repl" class="clearDiv"></div>
+
+  <div id="files" class="clearDiv"></div>
+  <div>
+    <button style="height:2em;width:5em;font-weight: bold;font-size: 0.75em;display:none;" id='run' type="submit">Run</button>
+</body>
+<script src="https://code.jquery.com/jquery-3.3.1.js" integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60=" crossorigin="anonymous"></script>
+<script>window.$ = window.jQuery = require('jquery');</script>
+<script src="./app.js"></script>
+<script>if (window.module) module = window.module;</script>
+
+<script src="../node_modules/monaco-editor/min/vs/loader.js"></script>
+<script>
+  // Save Monaco's amd require and restore Node's require
+  var amdRequire = global.require;
+  global.require = nodeRequire;
+</script>
+
+<script>
+  import superagent from 'superagent';
+  // require node modules before loader.js comes in
+  var path = require('path');
+
+  function uriFromPath(_path) {
+    var pathName = path.resolve(_path).replace(/\\/g, '/');
+    if (pathName.length > 0 && pathName.charAt(0) !== '/') {
+      pathName = '/' + pathName;
+    }
+    return encodeURI('file://' + pathName);
+  }
+  amdRequire.config({
+    baseUrl: uriFromPath(path.join(__dirname, '../node_modules/monaco-editor/min'))
+  });
+  // workaround monaco-css not understanding the environment
+  self.module = undefined;
+  // workaround monaco-typescript not understanding the environment
+  self.process.browser = true;
+  var editor;
+
+  let sha;
+  let filename;
+
+  $('#files').on('click', (event) => {
+    if (event.target.nodeName === 'LI') {
+      if (event.target.id === 'new-file') {
+        sha = null;
+        filename = null;
+        runEditor('// Create your code and hit run at the end');
+      } else {
+        console.log(event.target);
+        filename = event.target.textContent;
+        console.log('filename is', filename)
+        sha = event.target.getAttribute('data-sha')
+        console.log('sha is ', sha);
+        return superagent.get(event.target.id)
+          .then(data => {
+            runEditor(data.text)
+          });
+      }
+    }
+
+  });
+
+  function runEditor(data) {
+
+    console.log(data.text);
+    //   $('#home').hide();
+    $('#days').hide();
+    (function () {
+      $('#run').hide();
+      let obj = document.getElementsByClassName('clearDiv');
+      Object.values(obj).forEach(div => {
+        div.innerHTML = '';
+      });
+    })();
+
+    amdRequire(['vs/editor/editor.main'], function () {
+      editor = monaco.editor.create(document.getElementById('repl'), {
+        value: [
+          data
+        ].join('\n'),
+        language: 'javascript'
+      });
+    });
+    $('#repl').css({
+      'width': '400',
+      'height': '467',
+      'float': 'left',
+      'clear': 'left',
+    })
+    $('#resultWindow').css({
+      // 'float': 'left',
+      'background-color': 'black',
+      'color': 'white',
+    })
+    $('#resultWindow').show()
+    $('#resultWindow').text('Output Console')
+    $('#run').show()
+
+  }
+
+  $('#run').on('click', function (e) {
+    e.preventDefault();
+    $('#resultWindow').empty();
+    let data = editor.getValue();
+    let obj = {}
+    obj.code = data;
+
+    obj.day = dayName;
+    obj.language = 'javascript';
+
+    if (sha) obj.sha = sha;
+    if (filename) obj.fileName = filename;
+
+    console.log(obj);
+
+    // superagent.post(`http://localhost:3000/api/v1/code?classCode=${classCode}`)
+    superagent.post(`http://api.commando.ccs.net/api/v1/code?classCode=${classCode}`)
+      .set({ 'Content-Type': 'application/json', 'Authorization': `Bearer ${window.sessionStorage.jwt}` })
+      .send(obj)
+      .then(data => {
+        console.log('this is the body', data.text)
+        if (data.text.error) {
+          data = JSON.stringify(data.text.error)
+          $('#resultWindow').text(data.text.error);
+        } else {
+        console.log('output', data.text);
+        $('#resultWindow').text(data.text);
+        }
+      });
+  });
+</script>
+
+</html>
