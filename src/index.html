@@ -57,7 +57,7 @@
   <div id="roster" class="clearDiv"></div>
   <div id="pairs" class="clearDiv"></div>
   <div id="random" class="clearDiv"></div>
-  <textarea readonly class="clearDiv" id="resultWindow" style="display:none; resize:both;" rows="34" cols="50">Console Output</textarea>
+  <textarea readonly class="clearDiv" id="resultWindow" style="display:none; resize:both;" rows="40" cols="62">Console Output</textarea>
   <div id="repl" class="clearDiv"></div>
 
   <div id="files" class="clearDiv"></div>
@@ -144,7 +144,7 @@
     });
     $('#repl').css({
       'width': '400',
-      'height': '467',
+      'height': '522',
       'float': 'left',
       'clear': 'left',
     })
@@ -178,7 +178,7 @@
     superagent.post(`http://api.commando.ccs.net/api/v1/code?classCode=${classCode}`)
       .set({ 'Content-Type': 'application/json', 'Authorization': `Bearer ${window.sessionStorage.jwt}` })
       .send(obj)
-      .then(data => {
+      .then(data => { 
         console.log('this is the body', data.text)
         if (data.text.error) {
           data = JSON.stringify(data.text.error)

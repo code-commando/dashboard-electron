@@ -30,6 +30,8 @@ document.getElementById('courses').addEventListener('click', event => {
     classCode = event.target.textContent;
     $('#home').hide();
     superagent.get(apiUrl)
+    .set({ 'Content-Type': 'application/json', 'Authorization': `Bearer ${window.sessionStorage.gjwt}` })
+
       .then(data => {
         let str = '<ul>';
         for (let i = 0; i < data.body.length; i++) {
@@ -67,7 +69,7 @@ document.getElementById('nav-quiz').addEventListener('click', () => {
   if (day) {
     clearDiv();
     $('#home').hide();
-    // return superagent.get(`http://api.commando.ccs.net/api/v1/quiz/${day}`)
+    // return superagent.get(`http://localhost:3000/api/v1/quiz/${day}`)
     return superagent.get(`http://api.commando.ccs.net/api/v1/quiz/${day}`)
       .set({ 'Content-Type': 'application/json', 'Authorization': `Bearer ${window.sessionStorage.jwt}` })
       .then(questions => {
@@ -145,7 +147,7 @@ document.getElementById('nav-random').addEventListener('click', () => {
       $('#home').hide();
       clearDiv();
       let str = '<br /><h1>';
-      str += data.body.results[0];
+      str += data.body.results;
 
       str += '</h1>';
       let div = document.getElementById('random');
@@ -194,9 +196,9 @@ document.getElementById('login').addEventListener('click', () => {
 });
 
 $('#new-class').on('submit', function (e) {
+  e.preventDefault();
   let classCode = $(this).find('[name=classCode]').val();
   let githubRepo = $(this).find('[name=githubRepo]').val();
-  e.preventDefault();
   // return superagent.post('localhost:3000/api/v1/classes')
   return superagent.post('http://api.commando.ccs.net/api/v1/classes')
     .set({ 'Content-Type': 'application/json', 'Authorization': `Bearer ${window.sessionStorage.jwt}` })
