@@ -156,23 +156,31 @@
     let data = editor.getValue();
     let obj = {}
     obj.code = data;
+    console.log(data)
     obj.day = '01-node-ecosystem'
     // line 137: change to grab from textContent of event click;
     obj.language = 'javascript';
     // obj.sha = '563cec42a9bdbee9d7c0a2428486dcbe094f2f51'
     console.log('data -->', obj);
-    $.ajax({
-      type: "POST",
-      url: "http://api.commando.ccs.net/api/v1/code",
-      data: obj,
-      success: function (data) {
-        if (obj.language === 'javascript') {
-          data = JSON.stringify(data)
-        }
-        console.log('output', data);
-        $('#resultWindow').text(data);
-      },
-    });
+    superagent.post('http://api.commando.ccs.net/api/v1/code')
+      .send(obj)
+      .then(data => {
+        if(data.body.traceback) $('#resultWindow').text(data.body.traceback);
+        if(data.body.return) $('#resultWindow').text(data.body.return);
+      })
+     
+    // $.ajax({
+    //   type: "POST",
+    //   url: "http://api.commando.ccs.net/api/v1/code",
+    //   data: obj,
+    //   success: function (data) {
+    //     if (obj.language === 'javascript') {
+    //       data = JSON.stringify(data)
+    //     }
+    //     console.log('output', data);
+    //     $('#resultWindow').text(data);
+    //   },
+    // });
   });
 </script>
 
