@@ -67,6 +67,7 @@ document.getElementById('nav-quiz').addEventListener('click', () => {
   if (day) {
     clearDiv();
     $('#home').hide();
+    // return superagent.get(`http://api.commando.ccs.net/api/v1/quiz/${day}`)
     return superagent.get(`http://api.commando.ccs.net/api/v1/quiz/${day}`)
       .set({ 'Content-Type': 'application/json', 'Authorization': `Bearer ${window.sessionStorage.jwt}` })
       .then(questions => {
@@ -101,6 +102,7 @@ document.getElementById('nav-roster').addEventListener('click', () => {
 
   $('#home').hide();
   clearDiv();
+  // return superagent.get(`http://localhost:3000/api/v1/roster?classCode=${classCode}`)
   return superagent.get(`http://api.commando.ccs.net/api/v1/roster?classCode=${classCode}`)
     .then(data => {
       let str = '<ul>';

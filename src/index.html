@@ -172,21 +172,22 @@
     if (sha) obj.sha = sha;
     if (filename) obj.fileName = filename;
 
-  console.log(obj);
-     $.ajax({
-      type: "POST",
-      // url: `http://localhost:3000/api/v1/code?classCode=${classCode}`,
-      url: `http://api.commando.ccs.net/api/v1/code?classCode=${classCode}`,
-      data: obj,
-      headers: {'Authorization': `Bearer ${window.sessionStorage.jwt}`},
-      success: function (data) {
-        if(data.error){
-                data = JSON.stringify(data.error)
-            }
-        console.log('output', data);
-        $('#resultWindow').text(data);
-      },
-    });
+    console.log(obj);
+
+    // superagent.post(`http://localhost:3000/api/v1/code?classCode=${classCode}`)
+    superagent.post(`http://api.commando.ccs.net/api/v1/code?classCode=${classCode}`)
+      .set({ 'Content-Type': 'application/json', 'Authorization': `Bearer ${window.sessionStorage.jwt}` })
+      .send(obj)
+      .then(data => {
+        console.log('this is the body', data.text)
+        if (data.text.error) {
+          data = JSON.stringify(data.text.error)
+          $('#resultWindow').text(data.text.error);
+        } else {
+        console.log('output', data.text);
+        $('#resultWindow').text(data.text);
+        }
+      });
   });
 </script>
 
