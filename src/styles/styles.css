@@ -12,7 +12,7 @@ nav {
   background: #32293B;
 
 }
-ul#navigation, ul#auth {
+ul#navigation, ul#auth, ul.repl-menu {
   list-style: none;
   display: inline;
   /* text-align:center; */
@@ -22,7 +22,7 @@ ul#auth {
   /* margin-left:auto; */
   float:right;
 }
-nav ul li, #signin {
+nav ul li, #signin, ul.repl-menu li {
   display: inline-block;
   cursor: pointer;
   padding: 5px 20px 5px 0px;
@@ -32,9 +32,14 @@ nav ul li, #signin {
   /* text-align:center; */
 
 }
-/* li a {
-  padding-left:10%;
+div.repl-hide {
+  display:none;
+}
+/* ul.repl-menu {
+  display:none;
 } */
+
+
 nav ul li:hover, #signin:hover {
   background: #FC1156;
   /* color: white */

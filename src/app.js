@@ -157,11 +157,11 @@ document.getElementById('signup').addEventListener('click', () => {
   let githubURL = 'https://github.com/login/oauth/authorize';
   let options = {
     // local
-    // client_id: 'd6c0defbd80f3979493a',
-    // redirect_uri: 'http://localhost:3000/oauth',
+    client_id: 'd6c0defbd80f3979493a',
+    redirect_uri: 'http://localhost:3000/oauth',
     //live
-    client_id: 'f749977a8455b627dc56',
-    redirect_uri: 'http://api.commando.ccs.net/oauth',
+    // client_id: 'f749977a8455b627dc56',
+    // redirect_uri: 'http://api.commando.ccs.net/oauth',
     scope: 'read:user repo',
     state: 'autumn',
     allow_signup: 'true',
@@ -177,11 +177,11 @@ document.getElementById('login').addEventListener('click', () => {
   let githubURL = 'https://github.com/login/oauth/authorize';
   let options = {
     // local
-    // client_id: 'd6c0defbd80f3979493a',
-    // redirect_uri: 'http://localhost:3000/oauth',
+    client_id: 'd6c0defbd80f3979493a',
+    redirect_uri: 'http://localhost:3000/oauth',
     //live
-    client_id: 'f749977a8455b627dc56',
-    redirect_uri: 'http://api.commando.ccs.net/oauth',
+    // client_id: 'f749977a8455b627dc56',
+    // redirect_uri: 'http://api.commando.ccs.net/oauth',
     scope: 'read:user repo',
     state: 'autumn',
     allow_signup: 'true',
@@ -212,8 +212,10 @@ $('#nav-repl').on('click', () => {
   if (!day) return alert('Please pick a day');
   clearDiv();
   $('#home').hide();
-  // superagent.get(`http://localhost:3000/api/v1/code/${day}?classCode=` + classCode)
-  superagent.get(`http://api.commando.ccs.net/api/v1/code${day}?classCode=${classCode}`)
+  $('.repl').removeAttribute('class', 'repl-hide');
+
+  superagent.get(`http://localhost:3000/api/v1/code/${day}?classCode=` + classCode)
+  // superagent.get(`http://api.commando.ccs.net/api/v1/code${day}?classCode=${classCode}`)
     .set({ 'Content-Type': 'application/json', 'Authorization': `Bearer ${window.sessionStorage.jwt}` })
     .then(data => {
       $('#files').append(`<ul id="files"></ul>`);
@@ -230,6 +232,7 @@ function clearDiv() {
   $('#run').hide();
   $('#resultWindow').hide();
   $('#days').hide();
+  $('.repl').setAttribute('class', 'repl-hide');
   let obj = document.getElementsByClassName('clearDiv');
   Object.values(obj).forEach(div => {
     div.innerHTML = '';
