@@ -57,7 +57,7 @@
   <div id="roster" class="clearDiv"></div>
   <div id="pairs" class="clearDiv"></div>
   <div id="random" class="clearDiv"></div>
-  <textarea readonly class="clearDiv" id="resultWindow" style="display:none; resize:both;" rows="34" cols="50">Console Output</textarea>
+  <textarea readonly class="clearDiv" id="resultWindow" style="display:none;" rows="28" cols="36">Console Output</textarea>
   <div id="repl" class="clearDiv"></div>
 
   <div id="files" class="clearDiv"></div>
@@ -144,14 +144,15 @@
     });
     $('#repl').css({
       'width': '400',
-      'height': '467',
+      'height': '508',
       'float': 'left',
       'clear': 'left',
     })
     $('#resultWindow').css({
-      // 'float': 'left',
+      //'float': 'right',
       'background-color': 'black',
       'color': 'white',
+      'font-size':'15px',
     })
     $('#resultWindow').show()
     $('#resultWindow').text('Output Console')
@@ -174,18 +175,30 @@
 
     console.log(obj);
 
-    // superagent.post(`http://localhost:3000/api/v1/code?classCode=${classCode}`)
-    superagent.post(`http://api.commando.ccs.net/api/v1/code?classCode=${classCode}`)
+    superagent.post(`http://localhost:3000/api/v1/code?classCode=${classCode}`)
+    // superagent.post(`http://https://github.com/code-commando/sample-class/api/v1/code?classCode=${classCode}`)
       .set({ 'Content-Type': 'application/json', 'Authorization': `Bearer ${window.sessionStorage.jwt}` })
       .send(obj)
       .then(data => {
-        console.log('this is the body', data.text)
-        if (data.text.error) {
-          data = JSON.stringify(data.text.error)
-          $('#resultWindow').text(data.text.error);
-        } else {
-        console.log('output', data.text);
-        $('#resultWindow').text(data.text);
+        if(data.body.shaNewFile){
+          sha = data.body.shaNewFile;
+          filename = data.body.fileName;
+        }
+        console.log('this is the body', data.body)
+        if (data.body.error) {
+          if(obj.language === 'javascript'){
+          data = JSON.stringify(data.body.error)
+          $('#resultWindow').text(data);
+          }
+          else{
+            $('#resultWindow').text(data.body.error);
+          }
+        } 
+        else if(data.body.return && !data.body.log){
+        $('#resultWindow').text(data.body.return);
+        }
+        else {
+        $('#resultWindow').text(data.body.output);
         }
       });
   });
