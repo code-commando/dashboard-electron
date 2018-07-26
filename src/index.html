@@ -171,17 +171,7 @@
 
     obj.day = dayName;
     obj.language = 'javascript';
-    obj.event='run';
-
-    // if (sha) obj.sha = sha;
-    // if (filename){
-    //   obj.fileName = filename;
-    // } 
-    // else{
-    //   obj.sha = null;
-    // }
-
-    // console.log(obj);
+    obj.event= event.target.id;
 
     superagent.post(`http://localhost:3000/api/v1/code?classCode=${classCode}`)
     // superagent.post(`http://https://github.com/code-commando/sample-class/api/v1/code?classCode=${classCode}`)
@@ -212,8 +202,7 @@
     let data = editor.getValue();
     let obj = {}
     obj.code = data;
-    obj.event='save';
-
+    obj.event=event.target.id;
     obj.day = dayName;
     obj.language = 'javascript';
 
