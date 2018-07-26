@@ -10,7 +10,9 @@ app.use(express.urlencoded({extended: true}));
 
 app.post('/oauth', (req, res) => {
   res.send('yup it works');
+  console.log(req.body);
   window.sessionStorage.setItem('jwt', req.body.jwt);
+  window.sessionStorage.setItem('gjwt', req.body.gjwt);
   // res.redirect('/');
 });
 
