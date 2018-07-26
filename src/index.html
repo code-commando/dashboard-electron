@@ -57,12 +57,17 @@
   <div id="roster" class="clearDiv"></div>
   <div id="pairs" class="clearDiv"></div>
   <div id="random" class="clearDiv"></div>
-  <textarea readonly class="clearDiv" id="resultWindow" style="display:none; resize:both;" rows="40" cols="62">Console Output</textarea>
+  <textarea readonly class="clearDiv" id="resultWindow" style="display:none;" rows="28" cols="36">Console Output</textarea>
   <div id="repl" class="clearDiv"></div>
-
-  <div id="files" class="clearDiv"></div>
+  <div id="files" class="clearDiv" style="position:absolute;"></div>
+  <select  class="clearDiv" id="language-selection" style="display:none;position:absolute;">
+    <option value="javascript">Java</option>
+    <option value="python">Python</option>
+    <option value="java">Java</option>
+  </select>
   <div>
     <button style="height:2em;width:5em;font-weight: bold;font-size: 0.75em;display:none;" id='run' type="submit">Run</button>
+    <button style="height:2em;width:5em;font-weight: bold;font-size: 0.75em;display:none;" id='save' type="submit">Save</button>
 </body>
 <script src="https://code.jquery.com/jquery-3.3.1.js" integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60=" crossorigin="anonymous"></script>
 <script>window.$ = window.jQuery = require('jquery');</script>
@@ -101,6 +106,7 @@
   let filename;
 
   $('#files').on('click', (event) => {
+    $('#language-selection').hide();
     if (event.target.nodeName === 'LI') {
       if (event.target.id === 'new-file') {
         sha = null;
@@ -118,16 +124,16 @@
           });
       }
     }
-
   });
 
   function runEditor(data) {
-
+    $('#repl').show();
     console.log(data.text);
     //   $('#home').hide();
     $('#days').hide();
     (function () {
       $('#run').hide();
+      $('#save').hide();
       let obj = document.getElementsByClassName('clearDiv');
       Object.values(obj).forEach(div => {
         div.innerHTML = '';
@@ -139,26 +145,27 @@
         value: [
           data
         ].join('\n'),
-        language: 'javascript'
+        language: languageSelected
       });
     });
     $('#repl').css({
       'width': '400',
-      'height': '522',
+      'height': '508',
       'float': 'left',
       'clear': 'left',
     })
     $('#resultWindow').css({
-      // 'float': 'left',
+      //'float': 'right',
       'background-color': 'black',
       'color': 'white',
+      'font-size':'15px',
     })
     $('#resultWindow').show()
     $('#resultWindow').text('Output Console')
     $('#run').show()
+    $('#save').show()
 
   }
-
   $('#run').on('click', function (e) {
     e.preventDefault();
     $('#resultWindow').empty();
@@ -167,10 +174,49 @@
     obj.code = data;
 
     obj.day = dayName;
-    obj.language = 'javascript';
+    obj.language = languageSelected;
+    obj.event= event.target.id;
+
+    // superagent.post(`http://localhost:3000/api/v1/code?classCode=${classCode}`)
+    superagent.post(`http://api.commando.ccs.net/api/v1/code?classCode=${classCode}`)
+      .set({ 'Content-Type': 'application/json', 'Authorization': `Bearer ${window.sessionStorage.jwt}` })
+      .send(obj)
+      .then(data => {
+        console.log('this is the body', data.body)
+        if (data.body.error) {
+          if(obj.language === 'javascript'){
+          data = JSON.stringify(data.body.error)
+          $('#resultWindow').text(data);
+          }
+          else{
+            $('#resultWindow').text(data.body.error);
+          }
+        } 
+        else if(data.body.return && !data.body.log){
+        $('#resultWindow').text(data.body.return);
+        }
+        else {
+        $('#resultWindow').text(data.body.output);
+        }
+      });
+  });
+  $('#save').on('click', function (e) {
+    e.preventDefault();
+    $('#resultWindow').empty();
+    let data = editor.getValue();
+    let obj = {}
+    obj.code = data;
+    obj.event=event.target.id;
+    obj.day = dayName;
+    obj.language = languageSelected;
 
     if (sha) obj.sha = sha;
-    if (filename) obj.fileName = filename;
+    if (filename){
+      obj.fileName = filename;
+    } 
+    else{
+      obj.sha = null;
+    }
 
     console.log(obj);
 
@@ -178,14 +224,26 @@
     superagent.post(`http://api.commando.ccs.net/api/v1/code?classCode=${classCode}`)
       .set({ 'Content-Type': 'application/json', 'Authorization': `Bearer ${window.sessionStorage.jwt}` })
       .send(obj)
-      .then(data => { 
-        console.log('this is the body', data.text)
-        if (data.text.error) {
-          data = JSON.stringify(data.text.error)
-          $('#resultWindow').text(data.text.error);
-        } else {
-        console.log('output', data.text);
-        $('#resultWindow').text(data.text);
+      .then(data => {
+        if(data.body.shaNewFile){
+          sha = data.body.shaNewFile;
+          filename = data.body.fileName;
+        }
+        console.log('this is the body', data.body)
+        if (data.body.error) {
+          if(obj.language === 'javascript'){
+          data = JSON.stringify(data.body.error)
+          $('#resultWindow').text(data);
+          }
+          else{
+            $('#resultWindow').text(data.body.error);
+          }
+        } 
+        else if(data.body.return && !data.body.log){
+        $('#resultWindow').text(data.body.return);
+        }
+        else {
+        $('#resultWindow').text(data.body.output);
         }
       });
   });

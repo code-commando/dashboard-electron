@@ -7,17 +7,18 @@ let day;
 let classCode;
 let apiUrl;
 let dayName;
+var languageSelected;
 
 document.getElementById('nav-home').addEventListener('click', () => {
   if (!window.sessionStorage.jwt) return alert('please sign up / log in first');
   clearDiv();
   $('#home').show();
   $('#new-class').show();
-  // superagent.get('http://localhost:3000/api/v1/user')
-  superagent.get('http://api.commando.ccs.net/api/v1/user')
+  superagent.get('http://localhost:3000/api/v1/user')
+  // superagent.get('http://api.commando.ccs.net/api/v1/user')
     .set({ 'Content-Type': 'application/json', 'Authorization': `Bearer ${window.sessionStorage.jwt}` })
     .then(data => {
-      console.log(data.body.courses);
+      console.log(data.body);
       data.body.courses.forEach(course => {
         $('#courses').append(`<br /><a href=# id="${course.apiLink}" class="course-class">${course.classCode}</a><br />`);
       });
@@ -51,8 +52,8 @@ document.getElementById('days').addEventListener('click', (event) => {
     $('#home').hide();
     day = event.target.id;
     dayName = event.target.textContent;
-    // return superagent.get(`http://localhost:3000/api/v1/readme/${day}?classCode=${classCode}`)
-    return superagent.get(`http://api.commando.ccs.net/api/v1/readme/${day}`)
+    return superagent.get(`http://localhost:3000/api/v1/readme/${day}?classCode=${classCode}`)
+    // return superagent.get(`http://api.commando.ccs.net/api/v1/readme/${day}`)
       .set({ 'Content-Type': 'application/json', 'Authorization': `Bearer ${window.sessionStorage.jwt}` })
       .then(readme => {
         let preEl = document.createElement('pre');
@@ -159,11 +160,11 @@ document.getElementById('signup').addEventListener('click', () => {
   let githubURL = 'https://github.com/login/oauth/authorize';
   let options = {
     // local
-    // client_id: 'd6c0defbd80f3979493a',
-    // redirect_uri: 'http://localhost:3000/oauth',
+    client_id: 'd6c0defbd80f3979493a',
+    redirect_uri: 'http://localhost:3000/oauth',
     //live
-    client_id: 'f749977a8455b627dc56',
-    redirect_uri: 'http://api.commando.ccs.net/oauth',
+    // client_id: 'f749977a8455b627dc56',
+    // redirect_uri: 'http://api.commando.ccs.net/oauth',
     scope: 'read:user repo',
     state: 'autumn',
     allow_signup: 'true',
@@ -179,11 +180,11 @@ document.getElementById('login').addEventListener('click', () => {
   let githubURL = 'https://github.com/login/oauth/authorize';
   let options = {
     // local
-    // client_id: 'd6c0defbd80f3979493a',
-    // redirect_uri: 'http://localhost:3000/oauth',
+    client_id: 'd6c0defbd80f3979493a',
+    redirect_uri: 'http://localhost:3000/oauth',
     //live
-    client_id: 'f749977a8455b627dc56',
-    redirect_uri: 'http://api.commando.ccs.net/oauth',
+    // client_id: 'f749977a8455b627dc56',
+    // redirect_uri: 'http://api.commando.ccs.net/oauth',
     scope: 'read:user repo',
     state: 'autumn',
     allow_signup: 'true',
@@ -214,23 +215,41 @@ $('#nav-repl').on('click', () => {
   if (!day) return alert('Please pick a day');
   clearDiv();
   $('#home').hide();
-  // superagent.get(`http://localhost:3000/api/v1/code/${day}?classCode=` + classCode)
-  superagent.get(`http://api.commando.ccs.net/api/v1/code${day}?classCode=${classCode}`)
+  $('#repl').hide();
+  $('#language-selection').show();
+  let languages = [{value:'default',text:'Select a language'},{value:'javascript',text:'JavaScript'},{value:'python',text:'Python'},{value:'java',text:'Java'}];
+  $.each(languages,(i,language)=>{
+    $('#language-selection').append($('<option>', {
+      value: language.value,
+      text: language.text,
+    }));
+  });
+  $('#language-selection').val('default');
+});
+$('#language-selection').on('change', function() {
+  $(this).find('option[value=default]').prop('disabled', true);
+  languageSelected = this.value;
+  console.log('selected language', languageSelected);
+  $('#files').empty();
+  superagent.get(`http://localhost:3000/api/v1/code/${day}?classCode=` + classCode + `&language=${languageSelected}`)
+  // superagent.get(`http://api.commando.ccs.net/api/v1/code${day}?classCode=${classCode}`)
     .set({ 'Content-Type': 'application/json', 'Authorization': `Bearer ${window.sessionStorage.jwt}` })
     .then(data => {
       $('#files').append(`<ul id="files"></ul>`);
       console.log(data.body);
       let files = data.body;
+      $('#files ul').append(`<br /><br /><li id="new-file">Create A New File</li>`);
       for (let i = 0; i < files.length; i++) {
         $('#files ul').append(`<br /><li data-sha="${files[i].sha}"id="${files[i].link}">${files[i].file}</li>`);
       }
-      $('#files ul').append(`<br /><li id="new-file">Create A New File</li>`);
     });
 });
 
 function clearDiv() {
   $('#run').hide();
+  $('#save').hide();
   $('#resultWindow').hide();
+  $('#language-selection').hide();
   $('#days').hide();
   let obj = document.getElementsByClassName('clearDiv');
   Object.values(obj).forEach(div => {
