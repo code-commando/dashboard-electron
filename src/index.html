@@ -59,8 +59,12 @@
   <div id="random" class="clearDiv"></div>
   <textarea readonly class="clearDiv" id="resultWindow" style="display:none;" rows="28" cols="36">Console Output</textarea>
   <div id="repl" class="clearDiv"></div>
-
-  <div id="files" class="clearDiv"></div>
+  <div id="files" class="clearDiv" style="position:absolute;"></div>
+  <select  class="clearDiv" id="language-selection" style="display:none;position:absolute;">
+    <option value="javascript">Java</option>
+    <option value="python">Python</option>
+    <option value="java">Java</option>
+  </select>
   <div>
     <button style="height:2em;width:5em;font-weight: bold;font-size: 0.75em;display:none;" id='run' type="submit">Run</button>
     <button style="height:2em;width:5em;font-weight: bold;font-size: 0.75em;display:none;" id='save' type="submit">Save</button>
@@ -102,6 +106,7 @@
   let filename;
 
   $('#files').on('click', (event) => {
+    $('#language-selection').hide();
     if (event.target.nodeName === 'LI') {
       if (event.target.id === 'new-file') {
         sha = null;
@@ -119,11 +124,10 @@
           });
       }
     }
-
   });
 
   function runEditor(data) {
-
+    $('#repl').show();
     console.log(data.text);
     //   $('#home').hide();
     $('#days').hide();
@@ -141,7 +145,7 @@
         value: [
           data
         ].join('\n'),
-        language: 'javascript'
+        language: languageSelected
       });
     });
     $('#repl').css({
@@ -170,7 +174,7 @@
     obj.code = data;
 
     obj.day = dayName;
-    obj.language = 'javascript';
+    obj.language = languageSelected;
     obj.event= event.target.id;
 
     superagent.post(`http://localhost:3000/api/v1/code?classCode=${classCode}`)
@@ -204,7 +208,7 @@
     obj.code = data;
     obj.event=event.target.id;
     obj.day = dayName;
-    obj.language = 'javascript';
+    obj.language = languageSelected;
 
     if (sha) obj.sha = sha;
     if (filename){
