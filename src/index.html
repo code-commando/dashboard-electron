@@ -173,8 +173,8 @@
     obj.language = 'javascript';
     obj.event= event.target.id;
 
-    superagent.post(`http://localhost:3000/api/v1/code?classCode=${classCode}`)
-    // superagent.post(`http://https://github.com/code-commando/sample-class/api/v1/code?classCode=${classCode}`)
+    // superagent.post(`http://localhost:3000/api/v1/code?classCode=${classCode}`)
+    superagent.post(`http://api.commando.ccs.net/api/v1/code?classCode=${classCode}`)
       .set({ 'Content-Type': 'application/json', 'Authorization': `Bearer ${window.sessionStorage.jwt}` })
       .send(obj)
       .then(data => {
@@ -216,8 +216,8 @@
 
     console.log(obj);
 
-    superagent.post(`http://localhost:3000/api/v1/code?classCode=${classCode}`)
-    // superagent.post(`http://https://github.com/code-commando/sample-class/api/v1/code?classCode=${classCode}`)
+    // superagent.post(`http://localhost:3000/api/v1/code?classCode=${classCode}`)
+    superagent.post(`http://api.commando.ccs.net/api/v1/code?classCode=${classCode}`)
       .set({ 'Content-Type': 'application/json', 'Authorization': `Bearer ${window.sessionStorage.jwt}` })
       .send(obj)
       .then(data => {
