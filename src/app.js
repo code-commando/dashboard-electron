@@ -228,6 +228,7 @@ $('#nav-repl').on('click', () => {
 
 function clearDiv() {
   $('#run').hide();
+  $('#save').hide();
   $('#resultWindow').hide();
   $('#days').hide();
   let obj = document.getElementsByClassName('clearDiv');

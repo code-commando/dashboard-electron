@@ -63,6 +63,7 @@
   <div id="files" class="clearDiv"></div>
   <div>
     <button style="height:2em;width:5em;font-weight: bold;font-size: 0.75em;display:none;" id='run' type="submit">Run</button>
+    <button style="height:2em;width:5em;font-weight: bold;font-size: 0.75em;display:none;" id='save' type="submit">Save</button>
 </body>
 <script src="https://code.jquery.com/jquery-3.3.1.js" integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60=" crossorigin="anonymous"></script>
 <script>window.$ = window.jQuery = require('jquery');</script>
@@ -128,6 +129,7 @@
     $('#days').hide();
     (function () {
       $('#run').hide();
+      $('#save').hide();
       let obj = document.getElementsByClassName('clearDiv');
       Object.values(obj).forEach(div => {
         div.innerHTML = '';
@@ -157,9 +159,9 @@
     $('#resultWindow').show()
     $('#resultWindow').text('Output Console')
     $('#run').show()
+    $('#save').show()
 
   }
-
   $('#run').on('click', function (e) {
     e.preventDefault();
     $('#resultWindow').empty();
@@ -169,9 +171,59 @@
 
     obj.day = dayName;
     obj.language = 'javascript';
+    obj.event='run';
+
+    // if (sha) obj.sha = sha;
+    // if (filename){
+    //   obj.fileName = filename;
+    // } 
+    // else{
+    //   obj.sha = null;
+    // }
+
+    // console.log(obj);
+
+    superagent.post(`http://localhost:3000/api/v1/code?classCode=${classCode}`)
+    // superagent.post(`http://https://github.com/code-commando/sample-class/api/v1/code?classCode=${classCode}`)
+      .set({ 'Content-Type': 'application/json', 'Authorization': `Bearer ${window.sessionStorage.jwt}` })
+      .send(obj)
+      .then(data => {
+        console.log('this is the body', data.body)
+        if (data.body.error) {
+          if(obj.language === 'javascript'){
+          data = JSON.stringify(data.body.error)
+          $('#resultWindow').text(data);
+          }
+          else{
+            $('#resultWindow').text(data.body.error);
+          }
+        } 
+        else if(data.body.return && !data.body.log){
+        $('#resultWindow').text(data.body.return);
+        }
+        else {
+        $('#resultWindow').text(data.body.output);
+        }
+      });
+  });
+  $('#save').on('click', function (e) {
+    e.preventDefault();
+    $('#resultWindow').empty();
+    let data = editor.getValue();
+    let obj = {}
+    obj.code = data;
+    obj.event='save';
+
+    obj.day = dayName;
+    obj.language = 'javascript';
 
     if (sha) obj.sha = sha;
-    if (filename) obj.fileName = filename;
+    if (filename){
+      obj.fileName = filename;
+    } 
+    else{
+      obj.sha = null;
+    }
 
     console.log(obj);
 
